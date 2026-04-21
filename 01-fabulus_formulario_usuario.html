@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>FabulusIA — Gerador de GDD</title>
+<title>Fabulus — Gerador de GDD</title>
 <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400&display=swap" rel="stylesheet">
 <style>
   :root {
@@ -364,7 +364,7 @@
 
   .editable-block textarea {
     background: transparent; border: none; padding: 0;
-    min-height: 50px; font-size: 13px; color: var(--text); box-shadow: none;
+    min-height: 120px; font-size: 13px; color: #64a5bd; box-shadow: none;
   }
 
   .editable-block textarea:focus { border: none; box-shadow: none; }
@@ -538,7 +538,7 @@
   <div class="panel" id="panel2">
     <div class="section-tag">Proposta do jogo</div>
     <div class="section-title">Revise a proposta</div>
-    <div class="section-desc">O FabulusIA gerou a proposta abaixo com base no seu input. Revise, edite se necessário, e aprove para avançar.</div>
+    <div class="section-desc">O Fabulus gerou a proposta abaixo com base no seu input. Revise, edite se necessário, e aprove para avançar.</div>
 
     <div class="info-banner">
       <div class="info-banner-icon">✏️</div>
@@ -550,7 +550,7 @@
         <div class="output-icon">🎮</div>
         <div class="output-header-text">
           <div class="title">Documento de Projeto</div>
-          <div class="sub">Gerado pelo FabulusIA — aguardando validação</div>
+          <div class="sub">Gerado pelo Fabulus — aguardando validação</div>
         </div>
         <div class="output-status">Aguardando</div>
       </div>
@@ -572,7 +572,7 @@
         </div>
         <div class="divider"></div>
         <div class="output-section">
-          <div class="output-section-label">O que o FabulusIA vai pesquisar</div>
+          <div class="output-section-label">O que o Fabulus vai pesquisar</div>
           <div class="editable-block">
             <textarea id="doc1_pesquisa" oninput="ar(this)"></textarea>
             <div class="edit-hint">✏️ Clique para editar</div>
@@ -613,7 +613,7 @@
   <div class="panel" id="panel3">
     <div class="section-tag">Contexto do projeto</div>
     <div class="section-title">Restrições e contexto</div>
-    <div class="section-desc">Todos os campos são opcionais. Preencha apenas o que se aplica ao seu contexto. O que não for declarado será definido pelo FabulusIA com liberdade de design.</div>
+    <div class="section-desc">Todos os campos são opcionais. Preencha apenas o que se aplica ao seu contexto. O que não for declarado será definido pelo Fabulus com liberdade de design.</div>
 
     <div class="form-card">
       <div class="field">
@@ -658,7 +658,7 @@
   <div class="panel" id="panel4">
     <div class="section-tag">Contexto do jogo</div>
     <div class="section-title">Revise o contexto</div>
-    <div class="section-desc">O FabulusIA interpretou suas restrições. Revise, edite se necessário, e confirme para iniciar a geração do GDD.</div>
+    <div class="section-desc">O Fabulus interpretou suas restrições. Revise, edite se necessário, e confirme para iniciar a geração do GDD.</div>
 
     <div class="info-banner">
       <div class="info-banner-icon">✏️</div>
@@ -670,7 +670,7 @@
         <div class="output-icon">⚙️</div>
         <div class="output-header-text">
           <div class="title">Documento de Contexto</div>
-          <div class="sub">Gerado pelo FabulusIA — aguardando validação</div>
+          <div class="sub">Gerado pelo Fabulus — aguardando validação</div>
         </div>
         <div class="output-status">Aguardando</div>
       </div>
@@ -744,7 +744,7 @@
             <div style="width:28px;height:28px;border-radius:50%;background:var(--teal);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:white;flex-shrink:0;">1</div>
             <div>
               <div style="font-size:12px;font-weight:700;color:var(--text);margin-bottom:2px;">Geração do documento</div>
-              <div style="font-size:12px;color:var(--text);line-height:1.55;">O FabulusIA gera o GDD com base nas suas informações, seguindo uma estrutura validada de 10 seções.</div>
+              <div style="font-size:12px;color:var(--text);line-height:1.55;">O Fabulus gera o GDD com base nas suas informações, seguindo uma estrutura validada de 10 seções.</div>
             </div>
           </div>
           <div style="display:flex;gap:14px;align-items:flex-start;">
@@ -777,16 +777,48 @@
     </div>
   </div>
 
-  <!-- PROGRESSO DA GERAÇÃO -->
+  <!-- CONFIRMAÇÃO FINAL -->
   <div class="panel" id="panel6">
     <div class="generating-panel">
-      <div class="generating-icon">⚡</div>
-      <div class="generating-title">Gerando seu GDD</div>
-      <div class="generating-desc">O FabulusIA está trabalhando no seu documento. Você receberá uma notificação por e-mail quando estiver pronto.</div>
-      <div class="gen-progress-track">
-        <div class="gen-progress-fill"></div>
+      <div class="generating-icon" style="font-size:48px">📬</div>
+      <div class="generating-title">Projeto enviado com sucesso</div>
+      <div class="generating-desc">Suas informações foram registradas. Nossa equipe iniciará a geração do Game Design Document e você receberá o documento completo por e-mail assim que estiver pronto.</div>
+
+      <div style="max-width:400px;margin:32px auto 0;background:rgba(12,118,121,0.1);border:1px solid rgba(12,118,121,0.3);border-radius:14px;padding:28px;text-align:left;">
+        <div style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:2px;color:var(--teal-bright);margin-bottom:16px;">O que acontece agora</div>
+        <div style="display:grid;gap:14px;">
+          <div style="display:flex;gap:14px;align-items:flex-start;">
+            <div style="width:28px;height:28px;border-radius:50%;background:var(--teal);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:white;flex-shrink:0;">1</div>
+            <div>
+              <div style="font-size:12px;font-weight:700;color:var(--text);margin-bottom:2px;">Geração do documento</div>
+              <div style="font-size:12px;color:var(--text);line-height:1.55;">O Fabulus gera o Game Design Document com base nas suas informações, seguindo uma estrutura validada de 10 seções.</div>
+            </div>
+          </div>
+          <div style="display:flex;gap:14px;align-items:flex-start;">
+            <div style="width:28px;height:28px;border-radius:50%;background:var(--teal);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:white;flex-shrink:0;">2</div>
+            <div>
+              <div style="font-size:12px;font-weight:700;color:var(--text);margin-bottom:2px;">Revisão especializada</div>
+              <div style="font-size:12px;color:var(--text);line-height:1.55;">Nossa equipe revisa a qualidade criativa, pedagógica e de jogabilidade de cada seção antes da entrega.</div>
+            </div>
+          </div>
+          <div style="display:flex;gap:14px;align-items:flex-start;">
+            <div style="width:28px;height:28px;border-radius:50%;background:var(--teal);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:white;flex-shrink:0;">3</div>
+            <div>
+              <div style="font-size:12px;font-weight:700;color:var(--text);margin-bottom:2px;">Entrega do GDD</div>
+              <div style="font-size:12px;color:var(--text);line-height:1.55;">Você recebe o documento completo por e-mail, pronto para orientar o desenvolvimento do seu jogo.</div>
+            </div>
+          </div>
+        </div>
       </div>
-      <div class="gen-status" id="genStatus">Iniciando geração...</div>
+
+      <div style="max-width:400px;margin:24px auto 0;background:rgba(232,168,58,0.08);border:1px solid rgba(232,168,58,0.25);border-radius:12px;padding:20px 24px;display:flex;align-items:center;gap:16px;">
+        <div style="font-size:28px;flex-shrink:0;">📅</div>
+        <div style="text-align:left;">
+          <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--amber);margin-bottom:4px;">Prazo de entrega</div>
+          <div style="font-size:18px;font-weight:700;color:var(--text);letter-spacing:-0.3px;">2 dias úteis</div>
+          <div style="font-size:12px;color:var(--text);margin-top:2px;">a partir da confirmação do projeto</div>
+        </div>
+      </div>
     </div>
   </div>
 
@@ -835,9 +867,9 @@
 
     document.getElementById('doc1_titulo').value = titulo(tema);
     document.getElementById('doc1_quem').value =
-      `Perfil declarado: ${publico}.\n\nEste é um público com características específicas que moldarão todas as decisões de design do jogo — narrativa, mecânicas, linguagem e engajamento. O FabulusIA aprofundará essa interpretação ao longo da geração do GDD.`;
+      `Perfil declarado: ${publico}.\n\nEste é um público com características específicas que moldarão todas as decisões de design do jogo — narrativa, mecânicas, linguagem e engajamento. O Fabulus aprofundará essa interpretação ao longo da geração do GDD.`;
     document.getElementById('doc1_pesquisa').value =
-      `Para gerar um GDD rigoroso e pedagogicamente sólido sobre o tema "${tema}", o FabulusIA realizará uma pesquisa profunda cobrindo quatro dimensões:\n\n• O que é o tema: conceitos fundamentais, definições e contexto científico ou técnico relevante.\n• O que diz a lei: legislação brasileira e internacional aplicável, regulamentações e compromissos vigentes.\n• O que precisa acontecer: ações concretas e práticas aplicáveis ao contexto do público-alvo.\n• Como medir: indicadores, métricas e ferramentas de mensuração utilizadas em contextos profissionais e institucionais.`;
+      `Para gerar um GDD rigoroso e pedagogicamente sólido sobre o tema "${tema}", o Fabulus realizará uma pesquisa profunda cobrindo quatro dimensões:\n\n• O que é o tema: conceitos fundamentais, definições e contexto científico ou técnico relevante.\n• O que diz a lei: legislação brasileira e internacional aplicável, regulamentações e compromissos vigentes.\n• O que precisa acontecer: ações concretas e práticas aplicáveis ao contexto do público-alvo.\n• Como medir: indicadores, métricas e ferramentas de mensuração utilizadas em contextos profissionais e institucionais.`;
     document.getElementById('doc1_aprender').value =
       `Ao final do jogo, o jogador será capaz de:\n• Compreender os conceitos fundamentais do tema\n• Conhecer o marco legal e regulatório aplicável\n• Reconhecer ações concretas aplicáveis ao seu contexto\n• Relacionar suas escolhas ao impacto real que podem gerar\n• Identificar pelo menos três ações que pode colocar em prática agora` +
       (adicional ? `\n\nInformações adicionais consideradas: ${adicional}` : '');
@@ -862,11 +894,11 @@
     const publico = document.getElementById('f1_publico').value.trim();
 
     const livreTextos = {
-      estrutura: 'O FabulusIA definirá a estrutura mais adequada ao tema e público-alvo.',
-      pontuacao: 'O FabulusIA definirá a mecânica de pontuação mais adequada ao jogo.',
+      estrutura: 'O Fabulus definirá a estrutura mais adequada ao tema e público-alvo.',
+      pontuacao: 'O Fabulus definirá a mecânica de pontuação mais adequada ao jogo.',
       tecnico: 'Engine, plataforma e assets serão definidos com base no tipo de jogo mais adequado.',
       contexto: 'Sem restrições institucionais declaradas.',
-      tom: 'O FabulusIA definirá tom e identidade visual adequados ao tema e público-alvo.',
+      tom: 'O Fabulus definirá tom e identidade visual adequados ao tema e público-alvo.',
       adicional: 'Sem informações adicionais declaradas.',
     };
 
