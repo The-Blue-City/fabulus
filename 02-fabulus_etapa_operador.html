@@ -1,0 +1,517 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FabulusIA — Interface do Operador</title>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:       #1a2a38; --bg2: #14202c; --bg3: #0f1820;
+  --surface:  #243344; --surface2: #2e3f52;
+  --teal:     #0c7679; --teal-b: #10999d; --teal-c: #14bbbf;
+  --teal-dim: rgba(12,118,121,0.14); --teal-glow: rgba(12,118,121,0.3);
+  --border:   rgba(12,118,121,0.2); --border2: rgba(255,255,255,0.07);
+  --text:     #deeaf0; --text2: #8aafbf; --text3: #4e7a8e;
+  --green:    #2eb87e; --green-dim: rgba(46,184,126,0.1);
+  --amber:    #e8a83a; --amber-dim: rgba(232,168,58,0.1);
+  --edited:   rgba(232,168,58,0.08); --edited-b: rgba(232,168,58,0.3);
+  --radius: 8px; --radius-lg: 14px;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body { background:var(--bg); color:var(--text); font-family:'Montserrat',sans-serif; font-size:13px; line-height:1.65; min-height:100vh; display:flex; flex-direction:column; }
+
+/* TOPBAR */
+.topbar { background:var(--bg3); border-bottom:1px solid var(--border); height:52px; display:flex; align-items:center; padding:0 28px; gap:20px; flex-shrink:0; position:sticky; top:0; z-index:100; }
+.topbar-logo { display:flex; align-items:center; gap:8px; font-size:14px; font-weight:700; color:var(--text); }
+.topbar-logo-mark { width:26px; height:26px; background:var(--teal); border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:11px; font-weight:700; color:white; font-style:italic; box-shadow:0 0 10px var(--teal-glow); }
+.topbar-logo em { color:var(--teal-b); font-style:italic; font-weight:300; }
+.topbar-div { width:1px; height:22px; background:var(--border2); }
+.topbar-project { font-size:11px; color:var(--text); }
+.topbar-project strong { color:var(--text); font-weight:700; }
+.topbar-right { margin-left:auto; display:flex; align-items:center; gap:12px; }
+.operator-badge { font-size:9px; font-weight:700; text-transform:uppercase; letter-spacing:1px; color:var(--amber); background:var(--amber-dim); border:1px solid rgba(232,168,58,0.25); padding:3px 10px; border-radius:20px; }
+.changes-counter { font-size:11px; color:var(--text); display:flex; align-items:center; gap:6px; }
+.changes-dot { width:7px; height:7px; border-radius:50%; background:var(--amber); display:none; }
+.changes-dot.active { display:block; }
+.btn-ver { font-size:9px; font-weight:700; text-transform:uppercase; letter-spacing:0.8px; color:var(--text); background:transparent; border:1px solid var(--border2); border-radius:var(--radius); padding:5px 12px; cursor:pointer; font-family:'Montserrat',sans-serif; transition:all 0.2s; }
+.btn-ver:hover { border-color:var(--teal); color:var(--teal-b); }
+
+/* STEPNAV */
+.stepnav { background:var(--bg2); border-bottom:1px solid var(--border); padding:0 20px; display:flex; align-items:center; height:48px; overflow-x:auto; flex-shrink:0; gap:2px; }
+.snav-item { display:flex; align-items:center; gap:8px; padding:0 16px; height:48px; cursor:pointer; font-size:10px; font-weight:700; color:var(--text); white-space:nowrap; border-bottom:2px solid transparent; transition:all 0.2s; letter-spacing:0.5px; text-transform:uppercase; flex-shrink:0; }
+.snav-item:hover { color:var(--text); }
+.snav-item.active { color:var(--teal-b); border-bottom-color:var(--teal-b); }
+.snav-item.done { color:var(--green); }
+.snav-item.done .snav-num { background:var(--green); border-color:var(--green); color:white; font-size:0; }
+.snav-item.done .snav-num::after { content:'✓'; font-size:9px; }
+.snav-num { width:20px; height:20px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:9px; font-weight:700; border:1.5px solid currentColor; flex-shrink:0; transition:all 0.2s; }
+.snav-item.active .snav-num { background:var(--teal); border-color:var(--teal); color:white; box-shadow:0 0 8px var(--teal-glow); }
+.snav-sep { width:1px; height:18px; background:var(--border2); flex-shrink:0; }
+
+/* WORKSPACE */
+.workspace { display:grid; grid-template-columns:1fr 280px; flex:1; overflow:hidden; height:calc(100vh - 100px); }
+.editor-col { overflow-y:auto; padding:28px 32px; border-right:1px solid var(--border); }
+.reference-col { overflow-y:auto; background:var(--bg2); padding:20px; }
+
+/* STEP CONTENT */
+.step-content { display:none; }
+.step-content.active { display:block; animation:fadeIn 0.25s ease; }
+@keyframes fadeIn { from { opacity:0; transform:translateY(5px); } to { opacity:1; transform:translateY(0); } }
+
+.step-header { margin-bottom:28px; padding-bottom:18px; border-bottom:1px solid var(--border2); }
+.step-tag { font-size:9px; font-weight:700; text-transform:uppercase; letter-spacing:2px; color:var(--teal-b); margin-bottom:6px; }
+.step-title { font-size:18px; font-weight:700; color:var(--text); letter-spacing:-0.3px; margin-bottom:5px; }
+.step-subtitle { font-size:11px; color:var(--text); }
+
+/* AGENT CHECKPOINT */
+.agent-cp { background:var(--teal-dim); border:1px solid var(--border); border-radius:var(--radius-lg); padding:16px 18px; margin-bottom:24px; }
+.agent-cp-header { display:flex; align-items:center; gap:8px; margin-bottom:12px; }
+.agent-icon { width:22px; height:22px; border-radius:5px; background:var(--teal-dim); border:1px solid var(--teal); display:flex; align-items:center; justify-content:center; font-size:10px; flex-shrink:0; }
+.agent-cp-title { font-size:9px; font-weight:700; text-transform:uppercase; letter-spacing:1.5px; color:var(--teal-b); }
+.agent-list { list-style:none; display:grid; gap:7px; }
+.agent-list li { display:flex; gap:8px; align-items:flex-start; font-size:11px; color:var(--text); line-height:1.55; }
+.agent-list li::before { content:'✓'; color:var(--teal-b); flex-shrink:0; font-weight:700; font-size:10px; margin-top:1px; }
+
+/* OPERATOR CHECKPOINT */
+.operator-cp { margin-bottom:24px; }
+.operator-cp-header { display:flex; align-items:center; gap:8px; margin-bottom:14px; padding-bottom:12px; border-bottom:1px solid var(--border2); }
+.operator-icon { width:22px; height:22px; border-radius:5px; background:var(--amber-dim); border:1px solid var(--amber); display:flex; align-items:center; justify-content:center; font-size:10px; flex-shrink:0; }
+.operator-cp-title { font-size:9px; font-weight:700; text-transform:uppercase; letter-spacing:1.5px; color:var(--amber); }
+.cp-summary { font-size:10px; color:var(--text); margin-left:auto; }
+.cp-summary span { font-weight:700; color:var(--text); }
+
+/* QUESTION ITEM */
+.q-item { background:var(--surface); border:1.5px solid var(--border2); border-radius:var(--radius); padding:14px 16px; margin-bottom:10px; transition:border-color 0.2s, background 0.2s; }
+.q-item.approved { border-color:rgba(46,184,126,0.4); background:rgba(46,184,126,0.04); }
+.q-item.altered { border-color:rgba(232,168,58,0.4); background:var(--edited); }
+.q-question { font-size:12px; font-weight:700; color:var(--text); line-height:1.5; margin-bottom:10px; }
+.q-ctx-label { font-size:9px; font-weight:700; text-transform:uppercase; letter-spacing:1.2px; color:var(--teal-b); margin-bottom:5px; }
+.q-ctx { width:100%; background:var(--bg2); border:1.5px solid rgba(12,118,121,0.2); border-radius:var(--radius); padding:10px 12px; color:var(--text); font-family:'Montserrat',sans-serif; font-size:12px; line-height:1.6; resize:vertical; min-height:56px; outline:none; transition:border-color 0.2s; }
+.q-ctx:focus { border-color:var(--teal); }
+.q-actions { display:flex; gap:8px; margin-top:10px; }
+.btn-apv { display:inline-flex; align-items:center; gap:5px; padding:5px 13px; border-radius:var(--radius); font-family:'Montserrat',sans-serif; font-size:9px; font-weight:700; cursor:pointer; border:1.5px solid rgba(46,184,126,0.35); background:var(--green-dim); color:var(--green); letter-spacing:0.5px; text-transform:uppercase; transition:all 0.2s; }
+.btn-apv:hover { background:rgba(46,184,126,0.2); border-color:var(--green); }
+.btn-apv.active { background:var(--green); color:white; border-color:var(--green); }
+.btn-alt { display:inline-flex; align-items:center; gap:5px; padding:5px 13px; border-radius:var(--radius); font-family:'Montserrat',sans-serif; font-size:9px; font-weight:700; cursor:pointer; border:1.5px solid rgba(232,168,58,0.35); background:var(--amber-dim); color:var(--amber); letter-spacing:0.5px; text-transform:uppercase; transition:all 0.2s; }
+.btn-alt:hover { background:rgba(232,168,58,0.2); border-color:var(--amber); }
+.btn-alt.active { background:var(--amber); color:white; border-color:var(--amber); }
+
+/* ALTERATION FORM */
+.alt-form { display:none; margin-top:12px; border-top:1px solid var(--border2); padding-top:12px; }
+.alt-form.visible { display:grid; gap:10px; }
+.alt-label { font-size:9px; font-weight:700; text-transform:uppercase; letter-spacing:1.2px; color:var(--amber); margin-bottom:4px; }
+.alt-ta { width:100%; background:var(--bg2); border:1.5px solid rgba(232,168,58,0.2); border-radius:var(--radius); padding:10px 12px; color:var(--text); font-family:'Montserrat',sans-serif; font-size:12px; line-height:1.6; resize:vertical; min-height:56px; outline:none; transition:border-color 0.2s; }
+.alt-ta:focus { border-color:var(--amber); }
+
+/* APPROVAL BAR */
+.approval-bar { background:var(--surface); border:1px solid var(--border); border-radius:var(--radius-lg); padding:16px 20px; display:flex; align-items:center; gap:16px; margin-top:28px; }
+.approval-bar-text strong { font-size:12px; font-weight:700; color:var(--text); display:block; margin-bottom:2px; }
+.approval-bar-text p { font-size:10px; color:var(--text); }
+.approval-bar-actions { margin-left:auto; }
+.btn-approve { display:inline-flex; align-items:center; gap:6px; padding:8px 18px; border-radius:var(--radius); font-family:'Montserrat',sans-serif; font-size:10px; font-weight:700; cursor:pointer; transition:all 0.2s; border:none; outline:none; letter-spacing:0.8px; text-transform:uppercase; background:var(--green); color:white; }
+.btn-approve:hover { background:#28c880; transform:translateY(-1px); box-shadow:0 6px 16px rgba(46,184,126,0.3); }
+
+/* REFERENCE COL */
+.ref-title { font-size:9px; font-weight:700; text-transform:uppercase; letter-spacing:2px; color:var(--text); margin-bottom:14px; padding-bottom:10px; border-bottom:1px solid var(--border2); }
+.ref-section { margin-bottom:14px; }
+.ref-section-label { font-size:9px; font-weight:700; text-transform:uppercase; letter-spacing:1.2px; color:var(--teal-b); margin-bottom:5px; }
+.ref-block { background:var(--surface); border:1px solid var(--border2); border-radius:var(--radius); padding:10px 12px; font-size:11px; color:var(--text); line-height:1.6; white-space:pre-wrap; }
+.ref-empty { font-size:10px; color:var(--text); font-style:italic; padding:8px 12px; background:var(--surface); border:1px solid var(--border2); border-radius:var(--radius); min-height:32px; }
+
+/* FINAL PANEL */
+.final-panel { padding:48px 28px; text-align:center; }
+.final-icon { font-size:44px; margin-bottom:16px; }
+.final-title { font-size:20px; font-weight:700; color:var(--text); margin-bottom:8px; }
+.final-desc { font-size:12px; color:var(--text); max-width:380px; margin:0 auto 24px; line-height:1.7; }
+.summary-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; max-width:340px; margin:0 auto 24px; }
+.summary-card { background:var(--surface); border:1px solid var(--border2); border-radius:var(--radius); padding:14px; text-align:center; }
+.summary-num { font-size:24px; font-weight:800; color:var(--teal-b); }
+.summary-label { font-size:9px; color:var(--text); font-weight:600; text-transform:uppercase; letter-spacing:0.8px; margin-top:3px; }
+
+/* CHANGES PANEL */
+.changes-panel { position:fixed; right:0; top:100px; width:340px; height:calc(100vh - 100px); background:var(--bg3); border-left:1px solid var(--border); z-index:90; transform:translateX(100%); transition:transform 0.3s ease; overflow-y:auto; padding:20px; }
+.changes-panel.open { transform:translateX(0); }
+.changes-panel-title { font-size:9px; font-weight:700; text-transform:uppercase; letter-spacing:1.5px; color:var(--text); margin-bottom:14px; padding-bottom:10px; border-bottom:1px solid var(--border2); }
+.change-item { background:var(--surface); border:1px solid var(--border2); border-radius:var(--radius); padding:12px; margin-bottom:10px; }
+.change-item-step { font-size:9px; font-weight:700; text-transform:uppercase; letter-spacing:1px; color:var(--teal-b); margin-bottom:4px; }
+.change-item-field { font-size:11px; font-weight:700; color:var(--text); margin-bottom:6px; }
+.diff-orig { font-size:10px; color:var(--text); background:var(--bg2); border-radius:5px; padding:6px 8px; font-style:italic; text-decoration:line-through; line-height:1.5; margin-bottom:4px; }
+.diff-new { font-size:10px; color:var(--text); background:var(--edited); border:1px solid var(--edited-b); border-radius:5px; padding:6px 8px; line-height:1.5; margin-bottom:6px; }
+.change-just { font-size:10px; color:var(--amber); }
+
+/* MODAL */
+.modal-overlay { position:fixed; inset:0; background:rgba(0,0,0,0.6); display:flex; align-items:center; justify-content:center; z-index:200; opacity:0; pointer-events:none; transition:opacity 0.2s; }
+.modal-overlay.open { opacity:1; pointer-events:all; }
+.modal { background:var(--surface2); border:1px solid var(--border); border-radius:var(--radius-lg); padding:24px; width:440px; max-width:90vw; box-shadow:0 20px 60px rgba(0,0,0,0.5); transform:translateY(8px); transition:transform 0.2s; }
+.modal-overlay.open .modal { transform:translateY(0); }
+.modal-title { font-size:14px; font-weight:700; color:var(--text); margin-bottom:5px; }
+.modal-desc { font-size:11px; color:var(--text); margin-bottom:14px; line-height:1.6; }
+.modal-orig-label { font-size:9px; font-weight:700; text-transform:uppercase; letter-spacing:1px; color:var(--text); margin-bottom:5px; }
+.modal-orig { background:var(--bg2); border:1px solid var(--border2); border-radius:var(--radius); padding:10px 12px; font-size:11px; color:var(--text); font-style:italic; margin-bottom:14px; line-height:1.6; max-height:80px; overflow-y:auto; }
+.modal-ta { width:100%; background:var(--bg2); border:1.5px solid var(--border2); border-radius:var(--radius); padding:10px 12px; color:var(--text); font-family:'Montserrat',sans-serif; font-size:12px; line-height:1.6; min-height:80px; resize:vertical; outline:none; transition:border-color 0.2s; margin-bottom:14px; }
+.modal-ta:focus { border-color:var(--teal); }
+.modal-actions { display:flex; gap:8px; justify-content:flex-end; }
+.btn-secondary { display:inline-flex; align-items:center; padding:7px 14px; border-radius:var(--radius); font-family:'Montserrat',sans-serif; font-size:9px; font-weight:700; cursor:pointer; transition:all 0.2s; background:transparent; color:var(--text); border:1.5px solid var(--border2); letter-spacing:0.8px; text-transform:uppercase; }
+.btn-secondary:hover { border-color:var(--text); color:var(--text); }
+
+::-webkit-scrollbar { width:4px; }
+::-webkit-scrollbar-track { background:var(--bg2); }
+::-webkit-scrollbar-thumb { background:var(--teal); border-radius:2px; }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="topbar-logo"><div class="topbar-logo-mark">F</div><span style="letter-spacing:-0.2px">Fabulus<em>IA</em></span></div>
+  <div class="topbar-div"></div>
+  <div class="topbar-project">Projeto: <strong id="projectName">—</strong></div>
+  <div class="topbar-right">
+    <div class="changes-counter"><div class="changes-dot" id="changesDot"></div><span id="changesCount">0 alterações registradas</span></div>
+    <button class="btn-ver" onclick="toggleChanges()">Ver registro</button>
+    <div class="operator-badge">Operador</div>
+  </div>
+</div>
+
+<div class="stepnav">
+  <div class="snav-item active" id="snav3" onclick="goStep(3)"><div class="snav-num">3</div>Etapa 3 — Briefing e Pesquisa</div>
+  <div class="snav-sep"></div>
+  <div class="snav-item" id="snav4" onclick="goStep(4)"><div class="snav-num">4</div>Etapa 4 — Estrutura Lógica e Pedagógica</div>
+  <div class="snav-sep"></div>
+  <div class="snav-item" id="snav5" onclick="goStep(5)"><div class="snav-num">5</div>Etapa 5 — Narrativa</div>
+  <div class="snav-sep"></div>
+  <div class="snav-item" id="snav6" onclick="goStep(6)"><div class="snav-num">6</div>Etapa 6 — Mecânicas e Desafios</div>
+  <div class="snav-sep"></div>
+  <div class="snav-item" id="snav7" onclick="goStep(7)"><div class="snav-num">7</div>Etapa 7 — Audiovisual e Técnico</div>
+  <div class="snav-sep"></div>
+  <div class="snav-item" id="snav8" onclick="goStep(8)"><div class="snav-num">8</div>Etapa 8 — Validação Final</div>
+</div>
+
+<div class="workspace">
+<div class="editor-col">
+
+<!-- ═══════════════════════════════ ETAPA 3 ═══ -->
+<div id="step3" class="step-content">
+  <div class="step-header">
+    <div class="step-tag">Etapa 3 — Briefing e Pesquisa</div>
+    <div class="step-title">Verificação do Output do FabulusIA</div>
+    <div class="step-subtitle">Seções geradas: Seção 1 completa · Seção 2 parcial (2a) · Seção 3 parcial (3a, 3b, 3e)</div>
+  </div>
+  <div class="agent-cp">
+    <div class="agent-cp-header"><div class="agent-icon">🤖</div><div class="agent-cp-title">Checkpoint 3 — Verificação automática do FabulusIA</div></div>
+    <ul class="agent-list">
+      <li>Todos os elementos da Seção 1 foram gerados e estão presentes?</li>
+      <li>A terminologia usada na Seção 1 está uniforme internamente e será mantida como referência?</li>
+      <li>A premissa de 2a está presente e contém os elementos obrigatórios — mundo, época, atmosfera?</li>
+      <li>Os subitens 3a, 3b e 3e estão presentes e preenchidos?</li>
+      <li>Os princípios instrucionais de 3e estão alinhados com a estrutura de etapas declarada no input de contexto?</li>
+      <li>O conhecimento a ser adquirido em 3b cobre as dimensões declaradas no documento de projeto aprovado na Etapa 2?</li>
+    </ul>
+  </div>
+  <div class="operator-cp">
+    <div class="operator-cp-header"><div class="operator-icon">👤</div><div class="operator-cp-title">Checkpoint 3 — Verificação do Operador</div><div class="cp-summary"><span id="cp3-approved">0</span> aprovados · <span id="cp3-altered">0</span> alterados · <span id="cp3-pending">6</span> pendentes</div></div>
+    <div class="q-item" id="q3-1"><div class="q-question">O gênero narrativo é adequado ao público-alvo e aos objetivos pedagógicos?</div><div class="q-ctx-label">Contexto de avaliação — preenchido pelo FabulusIA</div><textarea class="q-ctx"></textarea><div class="q-actions"><button class="btn-apv" onclick="apvQ('q3-1','cp3',6)">✓ Aprovado</button><button class="btn-alt" onclick="altQ('q3-1','cp3',6)">✎ Registrar alteração</button></div><div class="alt-form" id="af-q3-1"><div><div class="alt-label">Texto original gerado pelo agente</div><textarea class="alt-ta"></textarea></div><div><div class="alt-label">Texto alterado pelo operador</div><textarea class="alt-ta"></textarea></div><div><div class="alt-label">Justificativa da alteração</div><textarea class="alt-ta" style="min-height:44px"></textarea></div></div></div>
+    <div class="q-item" id="q3-2"><div class="q-question">O público-alvo está definido com precisão suficiente em faixa etária, conhecimento prévio e contexto de uso?</div><div class="q-ctx-label">Contexto de avaliação — preenchido pelo FabulusIA</div><textarea class="q-ctx"></textarea><div class="q-actions"><button class="btn-apv" onclick="apvQ('q3-2','cp3',6)">✓ Aprovado</button><button class="btn-alt" onclick="altQ('q3-2','cp3',6)">✎ Registrar alteração</button></div><div class="alt-form" id="af-q3-2"><div><div class="alt-label">Texto original gerado pelo agente</div><textarea class="alt-ta"></textarea></div><div><div class="alt-label">Texto alterado pelo operador</div><textarea class="alt-ta"></textarea></div><div><div class="alt-label">Justificativa da alteração</div><textarea class="alt-ta" style="min-height:44px"></textarea></div></div></div>
+    <div class="q-item" id="q3-3"><div class="q-question">Os objetivos do jogo equilibram entretenimento e aprendizagem de forma viável?</div><div class="q-ctx-label">Contexto de avaliação — preenchido pelo FabulusIA</div><textarea class="q-ctx"></textarea><div class="q-actions"><button class="btn-apv" onclick="apvQ('q3-3','cp3',6)">✓ Aprovado</button><button class="btn-alt" onclick="altQ('q3-3','cp3',6)">✎ Registrar alteração</button></div><div class="alt-form" id="af-q3-3"><div><div class="alt-label">Texto original gerado pelo agente</div><textarea class="alt-ta"></textarea></div><div><div class="alt-label">Texto alterado pelo operador</div><textarea class="alt-ta"></textarea></div><div><div class="alt-label">Justificativa da alteração</div><textarea class="alt-ta" style="min-height:44px"></textarea></div></div></div>
+    <div class="q-item" id="q3-4"><div class="q-question">A premissa e cenário são criativamente adequados ao público-alvo — não apenas logicamente corretos?</div><div class="q-ctx-label">Contexto de avaliação — preenchido pelo FabulusIA</div><textarea class="q-ctx"></textarea><div class="q-actions"><button class="btn-apv" onclick="apvQ('q3-4','cp3',6)">✓ Aprovado</button><button class="btn-alt" onclick="altQ('q3-4','cp3',6)">✎ Registrar alteração</button></div><div class="alt-form" id="af-q3-4"><div><div class="alt-label">Texto original gerado pelo agente</div><textarea class="alt-ta"></textarea></div><div><div class="alt-label">Texto alterado pelo operador</div><textarea class="alt-ta"></textarea></div><div><div class="alt-label">Justificativa da alteração</div><textarea class="alt-ta" style="min-height:44px"></textarea></div></div></div>
+    <div class="q-item" id="q3-5"><div class="q-question">O conhecimento prévio requerido em 3a é realista para o público-alvo definido?</div><div class="q-ctx-label">Contexto de avaliação — preenchido pelo FabulusIA</div><textarea class="q-ctx"></textarea><div class="q-actions"><button class="btn-apv" onclick="apvQ('q3-5','cp3',6)">✓ Aprovado</button><button class="btn-alt" onclick="altQ('q3-5','cp3',6)">✎ Registrar alteração</button></div><div class="alt-form" id="af-q3-5"><div><div class="alt-label">Texto original gerado pelo agente</div><textarea class="alt-ta"></textarea></div><div><div class="alt-label">Texto alterado pelo operador</div><textarea class="alt-ta"></textarea></div><div><div class="alt-label">Justificativa da alteração</div><textarea class="alt-ta" style="min-height:44px"></textarea></div></div></div>
+    <div class="q-item" id="q3-6"><div class="q-question">O conhecimento a ser adquirido em 3b está no nível de complexidade certo para o público declarado?</div><div class="q-ctx-label">Contexto de avaliação — preenchido pelo FabulusIA</div><textarea class="q-ctx"></textarea><div class="q-actions"><button class="btn-apv" onclick="apvQ('q3-6','cp3',6)">✓ Aprovado</button><button class="btn-alt" onclick="altQ('q3-6','cp3',6)">✎ Registrar alteração</button></div><div class="alt-form" id="af-q3-6"><div><div class="alt-label">Texto original gerado pelo agente</div><textarea class="alt-ta"></textarea></div><div><div class="alt-label">Texto alterado pelo operador</div><textarea class="alt-ta"></textarea></div><div><div class="alt-label">Justificativa da alteração</div><textarea class="alt-ta" style="min-height:44px"></textarea></div></div></div>
+  </div>
+  <div class="approval-bar"><div class="approval-bar-text"><strong>Etapa 3 concluída?</strong><p>Ao aprovar, o FabulusIA avança para a Etapa 4.</p></div><div class="approval-bar-actions"><button class="btn-approve" onclick="approveStep(3)">✓ Aprovar Etapa 3 e avançar</button></div></div>
+</div>
+
+<!-- ═══════════════════════════════ ETAPA 4 ═══ -->
+<div id="step4" class="step-content">
+  <div class="step-header">
+    <div class="step-tag">Etapa 4 — Estrutura Lógica e Pedagógica</div>
+    <div class="step-title">Verificação do Output do FabulusIA</div>
+    <div class="step-subtitle">Seções geradas: Seção 3 completa (3c, 3d) · Seção 6 parcial (6a, 6b, 6c)</div>
+  </div>
+  <div class="agent-cp">
+    <div class="agent-cp-header"><div class="agent-icon">🤖</div><div class="agent-cp-title">Checkpoint 4 — Verificação automática do FabulusIA</div></div>
+    <ul class="agent-list">
+      <li>Cada nível de 6b tem conhecimento requerido, entregue e testado explicitamente definidos?</li>
+      <li>Nenhum nível de 6c testa conhecimento que ainda não foi entregue em nível anterior?</li>
+      <li>Os resultados de aprendizagem de 3d cobrem integralmente os objetivos de 3b?</li>
+      <li>A terminologia de 3d é consistente com 3a, 3b e Seção 1?</li>
+      <li>O conhecimento potencial de 3c é consistente com o escopo definido em 3b e 3d?</li>
+    </ul>
+  </div>
+  <div class="operator-cp">
+    <div class="operator-cp-header"><div class="operator-icon">👤</div><div class="operator-cp-title">Checkpoint 4 — Verificação do Operador</div><div class="cp-summary"><span id="cp4-approved">0</span> aprovados · <span id="cp4-altered">0</span> alterados · <span id="cp4-pending">4</span> pendentes</div></div>
+    <div class="q-item" id="q4-1"><div class="q-question">A sequência de níveis de 6a é pedagogicamente coerente — cada nível prepara o jogador para o seguinte de forma que faça sentido do ponto de vista da aprendizagem real?</div><div class="q-ctx-label">Contexto de avaliação — preenchido pelo FabulusIA</div><textarea class="q-ctx"></textarea><div class="q-actions"><button class="btn-apv" onclick="apvQ('q4-1','cp4',4)">✓ Aprovado</button><button class="btn-alt" onclick="altQ('q4-1','cp4',4)">✎ Registrar alteração</button></div><div class="alt-form" id="af-q4-1"><div><div class="alt-label">Texto original gerado pelo agente</div><textarea class="alt-ta"></textarea></div><div><div class="alt-label">Texto alterado pelo operador</div><textarea class="alt-ta"></textarea></div><div><div class="alt-label">Justificativa da alteração</div><textarea class="alt-ta" style="min-height:44px"></textarea></div></div></div>
+    <div class="q-item" id="q4-2"><div class="q-question">O número de níveis é adequado ao público-alvo e à estrutura de progressão declarada no input de contexto?</div><div class="q-ctx-label">Contexto de avaliação — preenchido pelo FabulusIA</div><textarea class="q-ctx"></textarea><div class="q-actions"><button class="btn-apv" onclick="apvQ('q4-2','cp4',4)">✓ Aprovado</button><button class="btn-alt" onclick="altQ('q4-2','cp4',4)">✎ Registrar alteração</button></div><div class="alt-form" id="af-q4-2"><div><div class="alt-label">Texto original gerado pelo agente</div><textarea class="alt-ta"></textarea></div><div><div class="alt-label">Texto alterado pelo operador</div><textarea class="alt-ta"></textarea></div><div><div class="alt-label">Justificativa da alteração</div><textarea class="alt-ta" style="min-height:44px"></textarea></div></div></div>
+    <div class="q-item" id="q4-3"><div class="q-question">Os resultados de aprendizagem de 3d são suficientemente específicos e mensuráveis para orientar a geração de desafios nas etapas seguintes?</div><div class="q-ctx-label">Contexto de avaliação — preenchido pelo FabulusIA</div><textarea class="q-ctx"></textarea><div class="q-actions"><button class="btn-apv" onclick="apvQ('q4-3','cp4',4)">✓ Aprovado</button><button class="btn-alt" onclick="altQ('q4-3','cp4',4)">✎ Registrar alteração</button></div><div class="alt-form" id="af-q4-3"><div><div class="alt-label">Texto original gerado pelo agente</div><textarea class="alt-ta"></textarea></div><div><div class="alt-label">Texto alterado pelo operador</div><textarea class="alt-ta"></textarea></div><div><div class="alt-label">Justificativa da alteração</div><textarea class="alt-ta" style="min-height:44px"></textarea></div></div></div>
+    <div class="q-item" id="q4-4"><div class="q-question">O conhecimento potencial de 3c é genuinamente relevante para o público-alvo ou é genérico demais para agregar valor ao documento?</div><div class="q-ctx-label">Contexto de avaliação — preenchido pelo FabulusIA</div><textarea class="q-ctx"></textarea><div class="q-actions"><button class="btn-apv" onclick="apvQ('q4-4','cp4',4)">✓ Aprovado</button><button class="btn-alt" onclick="altQ('q4-4','cp4',4)">✎ Registrar alteração</button></div><div class="alt-form" id="af-q4-4"><div><div class="alt-label">Texto original gerado pelo agente</div><textarea class="alt-ta"></textarea></div><div><div class="alt-label">Texto alterado pelo operador</div><textarea class="alt-ta"></textarea></div><div><div class="alt-label">Justificativa da alteração</div><textarea class="alt-ta" style="min-height:44px"></textarea></div></div></div>
+  </div>
+  <div class="approval-bar"><div class="approval-bar-text"><strong>Etapa 4 concluída?</strong><p>Ao aprovar, o FabulusIA avança para a Etapa 5.</p></div><div class="approval-bar-actions"><button class="btn-approve" onclick="approveStep(4)">✓ Aprovar Etapa 4 e avançar</button></div></div>
+</div>
+
+<!-- ═══════════════════════════════ ETAPA 5 ═══ -->
+<div id="step5" class="step-content">
+  <div class="step-header">
+    <div class="step-tag">Etapa 5 — Narrativa Ancorada na Estrutura</div>
+    <div class="step-title">Verificação do Output do FabulusIA</div>
+    <div class="step-subtitle">Seções geradas: Seção 2 completa sem diálogos (2b–2f) · Seção 7 completa (7a–7f)</div>
+  </div>
+  <div class="agent-cp">
+    <div class="agent-cp-header"><div class="agent-icon">🤖</div><div class="agent-cp-title">Checkpoint 5 — Verificação automática do FabulusIA</div></div>
+    <ul class="agent-list">
+      <li>O plot de 2b está ancorado na sequência de níveis de 6a — cada ato narrativo corresponde a pelo menos um nível?</li>
+      <li>Os personagens de 2c são introduzidos antes de serem referenciados em cenas posteriores?</li>
+      <li>Os arcos de desenvolvimento de 2c são consistentes com a progressão pedagógica de 6c?</li>
+      <li>As cenas de 2d correspondem à sequência de níveis de 6a sem saltos ou contradições?</li>
+      <li>Os caminhos ramificados de 2e são consistentes com a ordem pedagógica de 6c — nenhum caminho permite acesso fora de sequência?</li>
+      <li>O worldbuilding de 2f é consistente com a premissa de 2a e com o público-alvo da Seção 1?</li>
+      <li>Os elementos de engajamento de 7a a 7f estão presentes em cada nível de 6a?</li>
+      <li>A terminologia narrativa é consistente com a terminologia pedagógica da Seção 3?</li>
+      <li>As referências de voz de 2c estão registradas de forma distinta dos diálogos detalhados de 8c?</li>
+    </ul>
+  </div>
+  <div class="operator-cp">
+    <div class="operator-cp-header"><div class="operator-icon">👤</div><div class="operator-cp-title">Checkpoint 5 — Verificação do Operador</div><div class="cp-summary"><span id="cp5-approved">0</span> aprovados · <span id="cp5-altered">0</span> alterados · <span id="cp5-pending">5</span> pendentes</div></div>
+    <div class="q-item" id="q5-1"><div class="q-question">O plot de 2b é narrativamente envolvente para o público-alvo — não apenas pedagogicamente correto?</div><div class="q-ctx-label">Contexto de avaliação — preenchido pelo FabulusIA</div><textarea class="q-ctx"></textarea><div class="q-actions"><button class="btn-apv" onclick="apvQ('q5-1','cp5',5)">✓ Aprovado</button><button class="btn-alt" onclick="altQ('q5-1','cp5',5)">✎ Registrar alteração</button></div><div class="alt-form" id="af-q5-1"><div><div class="alt-label">Texto original gerado pelo agente</div><textarea class="alt-ta"></textarea></div><div><div class="alt-label">Texto alterado pelo operador</div><textarea class="alt-ta"></textarea></div><div><div class="alt-label">Justificativa da alteração</div><textarea class="alt-ta" style="min-height:44px"></textarea></div></div></div>
+    <div class="q-item" id="q5-2"><div class="q-question">Os personagens de 2c têm profundidade suficiente para sustentar o engajamento ao longo de todos os níveis?</div><div class="q-ctx-label">Contexto de avaliação — preenchido pelo FabulusIA</div><textarea class="q-ctx"></textarea><div class="q-actions"><button class="btn-apv" onclick="apvQ('q5-2','cp5',5)">✓ Aprovado</button><button class="btn-alt" onclick="altQ('q5-2','cp5',5)">✎ Registrar alteração</button></div><div class="alt-form" id="af-q5-2"><div><div class="alt-label">Texto original gerado pelo agente</div><textarea class="alt-ta"></textarea></div><div><div class="alt-label">Texto alterado pelo operador</div><textarea class="alt-ta"></textarea></div><div><div class="alt-label">Justificativa da alteração</div><textarea class="alt-ta" style="min-height:44px"></textarea></div></div></div>
+    <div class="q-item" id="q5-3"><div class="q-question">O tom e a voz dos personagens de 2c são adequados ao público-alvo da Seção 1?</div><div class="q-ctx-label">Contexto de avaliação — preenchido pelo FabulusIA</div><textarea class="q-ctx"></textarea><div class="q-actions"><button class="btn-apv" onclick="apvQ('q5-3','cp5',5)">✓ Aprovado</button><button class="btn-alt" onclick="altQ('q5-3','cp5',5)">✎ Registrar alteração</button></div><div class="alt-form" id="af-q5-3"><div><div class="alt-label">Texto original gerado pelo agente</div><textarea class="alt-ta"></textarea></div><div><div class="alt-label">Texto alterado pelo operador</div><textarea class="alt-ta"></textarea></div><div><div class="alt-label">Justificativa da alteração</div><textarea class="alt-ta" style="min-height:44px"></textarea></div></div></div>
+    <div class="q-item" id="q5-4"><div class="q-question">Os caminhos ramificados de 2e têm peso decisório suficiente para gerar engajamento real — ou são escolhas sem consequência percebida pelo jogador?</div><div class="q-ctx-label">Contexto de avaliação — preenchido pelo FabulusIA</div><textarea class="q-ctx"></textarea><div class="q-actions"><button class="btn-apv" onclick="apvQ('q5-4','cp5',5)">✓ Aprovado</button><button class="btn-alt" onclick="altQ('q5-4','cp5',5)">✎ Registrar alteração</button></div><div class="alt-form" id="af-q5-4"><div><div class="alt-label">Texto original gerado pelo agente</div><textarea class="alt-ta"></textarea></div><div><div class="alt-label">Texto alterado pelo operador</div><textarea class="alt-ta"></textarea></div><div><div class="alt-label">Justificativa da alteração</div><textarea class="alt-ta" style="min-height:44px"></textarea></div></div></div>
+    <div class="q-item" id="q5-5"><div class="q-question">O worldbuilding de 2f é imersivo o suficiente para o público-alvo sem adicionar complexidade desnecessária ao escopo do jogo?</div><div class="q-ctx-label">Contexto de avaliação — preenchido pelo FabulusIA</div><textarea class="q-ctx"></textarea><div class="q-actions"><button class="btn-apv" onclick="apvQ('q5-5','cp5',5)">✓ Aprovado</button><button class="btn-alt" onclick="altQ('q5-5','cp5',5)">✎ Registrar alteração</button></div><div class="alt-form" id="af-q5-5"><div><div class="alt-label">Texto original gerado pelo agente</div><textarea class="alt-ta"></textarea></div><div><div class="alt-label">Texto alterado pelo operador</div><textarea class="alt-ta"></textarea></div><div><div class="alt-label">Justificativa da alteração</div><textarea class="alt-ta" style="min-height:44px"></textarea></div></div></div>
+  </div>
+  <div class="approval-bar"><div class="approval-bar-text"><strong>Etapa 5 concluída?</strong><p>Ao aprovar, o FabulusIA avança para a Etapa 6.</p></div><div class="approval-bar-actions"><button class="btn-approve" onclick="approveStep(5)">✓ Aprovar Etapa 5 e avançar</button></div></div>
+</div>
+
+<!-- ═══════════════════════════════ ETAPA 6 ═══ -->
+<div id="step6" class="step-content">
+  <div class="step-header">
+    <div class="step-tag">Etapa 6 — Mecânicas e Desafios</div>
+    <div class="step-title">Verificação do Output do FabulusIA</div>
+    <div class="step-subtitle">Seções geradas: Seção 4 completa (4a–4d) · Seção 5 completa (5a–5d) · Seção 6 completa (6d)</div>
+  </div>
+  <div class="agent-cp">
+    <div class="agent-cp-header"><div class="agent-icon">🤖</div><div class="agent-cp-title">Checkpoint 6 — Verificação automática do FabulusIA</div></div>
+    <ul class="agent-list">
+      <li>As regras de 4a são consistentes com o plot de 2b e com a sequência de níveis de 6a?</li>
+      <li>Os controladores e ações de 4b são derivados das regras de 4a?</li>
+      <li>O sistema de progressão de 4c é consistente com a ordem pedagógica de 6c?</li>
+      <li>A curva de Flow de 4d é compatível com o conhecimento entregue por nível em 6b?</li>
+      <li>Cada desafio de 5a tem parâmetros mensuráveis explicitamente definidos?</li>
+      <li>Cada desafio de 5a está vinculado a pelo menos um resultado de aprendizagem de 3d em 5d?</li>
+      <li>As metas de 5b são consistentes com a sequência de níveis de 6a?</li>
+      <li>A relação de 5c é consistente com o plot de 2b?</li>
+      <li>6d completa 6a, 6b e 6c sem contradição?</li>
+      <li>Nenhuma regra de 4a contradiz elementos narrativos de 2b ou worldbuilding de 2f?</li>
+    </ul>
+  </div>
+  <div class="operator-cp">
+    <div class="operator-cp-header"><div class="operator-icon">👤</div><div class="operator-cp-title">Checkpoint 6 — Verificação do Operador</div><div class="cp-summary"><span id="cp6-approved">0</span> aprovados · <span id="cp6-altered">0</span> alterados · <span id="cp6-pending">5</span> pendentes</div></div>
+    <div class="q-item" id="q6-1"><div class="q-question">As mecânicas de 4a e 4b são jogáveis na prática — não apenas pedagogicamente corretas e narrativamente consistentes?</div><div class="q-ctx-label">Contexto de avaliação — preenchido pelo FabulusIA</div><textarea class="q-ctx"></textarea><div class="q-actions"><button class="btn-apv" onclick="apvQ('q6-1','cp6',5)">✓ Aprovado</button><button class="btn-alt" onclick="altQ('q6-1','cp6',5)">✎ Registrar alteração</button></div><div class="alt-form" id="af-q6-1"><div><div class="alt-label">Texto original gerado pelo agente</div><textarea class="alt-ta"></textarea></div><div><div class="alt-label">Texto alterado pelo operador</div><textarea class="alt-ta"></textarea></div><div><div class="alt-label">Justificativa da alteração</div><textarea class="alt-ta" style="min-height:44px"></textarea></div></div></div>
+    <div class="q-item" id="q6-2"><div class="q-question">A curva de Flow de 4d está calibrada para o público-alvo real — não apenas para o público declarado no input?</div><div class="q-ctx-label">Contexto de avaliação — preenchido pelo FabulusIA</div><textarea class="q-ctx"></textarea><div class="q-actions"><button class="btn-apv" onclick="apvQ('q6-2','cp6',5)">✓ Aprovado</button><button class="btn-alt" onclick="altQ('q6-2','cp6',5)">✎ Registrar alteração</button></div><div class="alt-form" id="af-q6-2"><div><div class="alt-label">Texto original gerado pelo agente</div><textarea class="alt-ta"></textarea></div><div><div class="alt-label">Texto alterado pelo operador</div><textarea class="alt-ta"></textarea></div><div><div class="alt-label">Justificativa da alteração</div><textarea class="alt-ta" style="min-height:44px"></textarea></div></div></div>
+    <div class="q-item" id="q6-3"><div class="q-question">Os desafios de 5a são suficientemente variados para manter o engajamento ao longo de todos os níveis?</div><div class="q-ctx-label">Contexto de avaliação — preenchido pelo FabulusIA</div><textarea class="q-ctx"></textarea><div class="q-actions"><button class="btn-apv" onclick="apvQ('q6-3','cp6',5)">✓ Aprovado</button><button class="btn-alt" onclick="altQ('q6-3','cp6',5)">✎ Registrar alteração</button></div><div class="alt-form" id="af-q6-3"><div><div class="alt-label">Texto original gerado pelo agente</div><textarea class="alt-ta"></textarea></div><div><div class="alt-label">Texto alterado pelo operador</div><textarea class="alt-ta"></textarea></div><div><div class="alt-label">Justificativa da alteração</div><textarea class="alt-ta" style="min-height:44px"></textarea></div></div></div>
+    <div class="q-item" id="q6-4"><div class="q-question">As escolhas com consequências de 2e estão operacionalizadas em desafios de 5a com peso decisório real?</div><div class="q-ctx-label">Contexto de avaliação — preenchido pelo FabulusIA</div><textarea class="q-ctx"></textarea><div class="q-actions"><button class="btn-apv" onclick="apvQ('q6-4','cp6',5)">✓ Aprovado</button><button class="btn-alt" onclick="altQ('q6-4','cp6',5)">✎ Registrar alteração</button></div><div class="alt-form" id="af-q6-4"><div><div class="alt-label">Texto original gerado pelo agente</div><textarea class="alt-ta"></textarea></div><div><div class="alt-label">Texto alterado pelo operador</div><textarea class="alt-ta"></textarea></div><div><div class="alt-label">Justificativa da alteração</div><textarea class="alt-ta" style="min-height:44px"></textarea></div></div></div>
+    <div class="q-item" id="q6-5"><div class="q-question">Os requisitos técnicos implícitos nas mecânicas de 4a e 4b são realistas para o orçamento típico do usuário?</div><div class="q-ctx-label">Contexto de avaliação — preenchido pelo FabulusIA</div><textarea class="q-ctx"></textarea><div class="q-actions"><button class="btn-apv" onclick="apvQ('q6-5','cp6',5)">✓ Aprovado</button><button class="btn-alt" onclick="altQ('q6-5','cp6',5)">✎ Registrar alteração</button></div><div class="alt-form" id="af-q6-5"><div><div class="alt-label">Texto original gerado pelo agente</div><textarea class="alt-ta"></textarea></div><div><div class="alt-label">Texto alterado pelo operador</div><textarea class="alt-ta"></textarea></div><div><div class="alt-label">Justificativa da alteração</div><textarea class="alt-ta" style="min-height:44px"></textarea></div></div></div>
+  </div>
+  <div class="approval-bar"><div class="approval-bar-text"><strong>Etapa 6 concluída?</strong><p>Ao aprovar, o FabulusIA avança para a Etapa 7.</p></div><div class="approval-bar-actions"><button class="btn-approve" onclick="approveStep(6)">✓ Aprovar Etapa 6 e avançar</button></div></div>
+</div>
+
+<!-- ═══════════════════════════════ ETAPA 7 ═══ -->
+<div id="step7" class="step-content">
+  <div class="step-header">
+    <div class="step-tag">Etapa 7 — Conteúdo Audiovisual e Requisitos Técnicos</div>
+    <div class="step-title">Verificação do Output do FabulusIA</div>
+    <div class="step-subtitle">Seções geradas: Seção 2 completa (8c) · Seção 8 completa (8a–8d) · Seção 9 completa (9a–9d)</div>
+  </div>
+  <div class="agent-cp">
+    <div class="agent-cp-header"><div class="agent-icon">🤖</div><div class="agent-cp-title">Checkpoint 7 — Verificação automática do FabulusIA</div></div>
+    <ul class="agent-list">
+      <li>As diretrizes visuais de 8a são consistentes com a atmosfera de 2a, o worldbuilding de 2f e os estímulos sensoriais de 7c?</li>
+      <li>As diretrizes de áudio de 8b são consistentes com a atmosfera de 2a, os estímulos sensoriais de 7c e as diretrizes visuais de 8a?</li>
+      <li>Os diálogos de 8c cobrem todas as cenas de 2d e são consistentes com as referências de voz e tom dos personagens de 2c?</li>
+      <li>As cutscenes de 8d correspondem aos eventos narrativos de 2b e 2d e são consistentes com as diretrizes visuais de 8a?</li>
+      <li>A plataforma de 9a é consistente com o formato declarado na Seção 1?</li>
+      <li>As ferramentas e engines de 9b são compatíveis com as regras de 4a e com a plataforma de 9a?</li>
+      <li>Os requisitos de sistema de 9c são derivados da plataforma de 9a e das ferramentas de 9b?</li>
+      <li>A arquitetura de dados de 9d suporta o sistema de progressão de 4c e os caminhos ramificados de 2e?</li>
+    </ul>
+  </div>
+  <div class="operator-cp">
+    <div class="operator-cp-header"><div class="operator-icon">👤</div><div class="operator-cp-title">Checkpoint 7 — Verificação do Operador</div><div class="cp-summary"><span id="cp7-approved">0</span> aprovados · <span id="cp7-altered">0</span> alterados · <span id="cp7-pending">5</span> pendentes</div></div>
+    <div class="q-item" id="q7-1"><div class="q-question">As diretrizes visuais de 8a são esteticamente adequadas ao público-alvo e ao tom narrativo do jogo — não apenas logicamente consistentes com 2a e 2f?</div><div class="q-ctx-label">Contexto de avaliação — preenchido pelo FabulusIA</div><textarea class="q-ctx"></textarea><div class="q-actions"><button class="btn-apv" onclick="apvQ('q7-1','cp7',5)">✓ Aprovado</button><button class="btn-alt" onclick="altQ('q7-1','cp7',5)">✎ Registrar alteração</button></div><div class="alt-form" id="af-q7-1"><div><div class="alt-label">Texto original gerado pelo agente</div><textarea class="alt-ta"></textarea></div><div><div class="alt-label">Texto alterado pelo operador</div><textarea class="alt-ta"></textarea></div><div><div class="alt-label">Justificativa da alteração</div><textarea class="alt-ta" style="min-height:44px"></textarea></div></div></div>
+    <div class="q-item" id="q7-2"><div class="q-question">As diretrizes de áudio de 8b criam a atmosfera certa para cada momento do jogo — aprendizado, ação e verificação?</div><div class="q-ctx-label">Contexto de avaliação — preenchido pelo FabulusIA</div><textarea class="q-ctx"></textarea><div class="q-actions"><button class="btn-apv" onclick="apvQ('q7-2','cp7',5)">✓ Aprovado</button><button class="btn-alt" onclick="altQ('q7-2','cp7',5)">✎ Registrar alteração</button></div><div class="alt-form" id="af-q7-2"><div><div class="alt-label">Texto original gerado pelo agente</div><textarea class="alt-ta"></textarea></div><div><div class="alt-label">Texto alterado pelo operador</div><textarea class="alt-ta"></textarea></div><div><div class="alt-label">Justificativa da alteração</div><textarea class="alt-ta" style="min-height:44px"></textarea></div></div></div>
+    <div class="q-item" id="q7-3"><div class="q-question">Os diálogos de 8c têm qualidade narrativa — são naturais para o público-alvo e consistentes com a personalidade de cada personagem definida em 2c?</div><div class="q-ctx-label">Contexto de avaliação — preenchido pelo FabulusIA</div><textarea class="q-ctx"></textarea><div class="q-actions"><button class="btn-apv" onclick="apvQ('q7-3','cp7',5)">✓ Aprovado</button><button class="btn-alt" onclick="altQ('q7-3','cp7',5)">✎ Registrar alteração</button></div><div class="alt-form" id="af-q7-3"><div><div class="alt-label">Texto original gerado pelo agente</div><textarea class="alt-ta"></textarea></div><div><div class="alt-label">Texto alterado pelo operador</div><textarea class="alt-ta"></textarea></div><div><div class="alt-label">Justificativa da alteração</div><textarea class="alt-ta" style="min-height:44px"></textarea></div></div></div>
+    <div class="q-item" id="q7-4"><div class="q-question">As cutscenes de 8d são cinematicamente eficientes — comunicam os momentos narrativos chave sem exceder o escopo do jogo?</div><div class="q-ctx-label">Contexto de avaliação — preenchido pelo FabulusIA</div><textarea class="q-ctx"></textarea><div class="q-actions"><button class="btn-apv" onclick="apvQ('q7-4','cp7',5)">✓ Aprovado</button><button class="btn-alt" onclick="altQ('q7-4','cp7',5)">✎ Registrar alteração</button></div><div class="alt-form" id="af-q7-4"><div><div class="alt-label">Texto original gerado pelo agente</div><textarea class="alt-ta"></textarea></div><div><div class="alt-label">Texto alterado pelo operador</div><textarea class="alt-ta"></textarea></div><div><div class="alt-label">Justificativa da alteração</div><textarea class="alt-ta" style="min-height:44px"></textarea></div></div></div>
+    <div class="q-item" id="q7-5"><div class="q-question">As ferramentas e engines de 9b e os requisitos de sistema de 9c são realistas para o orçamento típico do usuário?</div><div class="q-ctx-label">Contexto de avaliação — preenchido pelo FabulusIA</div><textarea class="q-ctx"></textarea><div class="q-actions"><button class="btn-apv" onclick="apvQ('q7-5','cp7',5)">✓ Aprovado</button><button class="btn-alt" onclick="altQ('q7-5','cp7',5)">✎ Registrar alteração</button></div><div class="alt-form" id="af-q7-5"><div><div class="alt-label">Texto original gerado pelo agente</div><textarea class="alt-ta"></textarea></div><div><div class="alt-label">Texto alterado pelo operador</div><textarea class="alt-ta"></textarea></div><div><div class="alt-label">Justificativa da alteração</div><textarea class="alt-ta" style="min-height:44px"></textarea></div></div></div>
+  </div>
+  <div class="approval-bar"><div class="approval-bar-text"><strong>Etapa 7 concluída?</strong><p>Ao aprovar, o FabulusIA executa a validação final da Etapa 8.</p></div><div class="approval-bar-actions"><button class="btn-approve" onclick="approveStep(7)">✓ Aprovar Etapa 7 e avançar</button></div></div>
+</div>
+
+<!-- ═══════════════════════════════ ETAPA 8 ═══ -->
+<div id="step8" class="step-content">
+  <div class="step-header">
+    <div class="step-tag">Etapa 8 — Consolidação e Validação Final</div>
+    <div class="step-title">Verificação global do documento completo</div>
+    <div class="step-subtitle">O FabulusIA verifica todo o GDD contra os cinco critérios da Seção 10 simultaneamente</div>
+  </div>
+  <div class="agent-cp">
+    <div class="agent-cp-header"><div class="agent-icon">🤖</div><div class="agent-cp-title">Checkpoint 8 — Verificação global automática do FabulusIA</div></div>
+    <ul class="agent-list">
+      <li>Todas as seções 1 a 9 estão presentes e todos os subitens estão preenchidos? (10a — Completude)</li>
+      <li>A terminologia está uniforme em todo o documento sem inconsistências entre seções? (10b — Consistência interna)</li>
+      <li>Todos os resultados de aprendizagem de 3d estão cobertos por pelo menos um nível em 6b e por pelo menos um desafio em 5d? (10c — Aderência pedagógica)</li>
+      <li>A linguagem, complexidade e estímulos são consistentes com o público definido na Seção 1 em todo o documento? (10d — Adequação ao público-alvo)</li>
+      <li>Todas as intervenções dos Checkpoints do Operador das Etapas 3 a 7 estão registradas com texto original, texto alterado e justificativa? (10e — Rastreabilidade)</li>
+    </ul>
+  </div>
+  <div class="operator-cp">
+    <div class="operator-cp-header"><div class="operator-icon">👤</div><div class="operator-cp-title">Checkpoint 8 — Aprovação Final do Operador</div><div class="cp-summary"><span id="cp8-approved">0</span> aprovados · <span id="cp8-altered">0</span> alterados · <span id="cp8-pending">5</span> pendentes</div></div>
+    <div class="q-item" id="q8-1"><div class="q-question">O documento está completo — todas as seções e subitens preenchidos? (10a)</div><div class="q-ctx-label">Resultado da verificação — preenchido pelo FabulusIA</div><textarea class="q-ctx"></textarea><div class="q-actions"><button class="btn-apv" onclick="apvQ('q8-1','cp8',5)">✓ Aprovado</button><button class="btn-alt" onclick="altQ('q8-1','cp8',5)">✎ Registrar pendência</button></div><div class="alt-form" id="af-q8-1"><div><div class="alt-label">Subitem com problema identificado</div><textarea class="alt-ta"></textarea></div><div><div class="alt-label">Correção ou decisão do operador</div><textarea class="alt-ta"></textarea></div><div><div class="alt-label">Justificativa</div><textarea class="alt-ta" style="min-height:44px"></textarea></div></div></div>
+    <div class="q-item" id="q8-2"><div class="q-question">O documento é internamente consistente — terminologia uniforme e sem decisões conflitantes? (10b)</div><div class="q-ctx-label">Resultado da verificação — preenchido pelo FabulusIA</div><textarea class="q-ctx"></textarea><div class="q-actions"><button class="btn-apv" onclick="apvQ('q8-2','cp8',5)">✓ Aprovado</button><button class="btn-alt" onclick="altQ('q8-2','cp8',5)">✎ Registrar pendência</button></div><div class="alt-form" id="af-q8-2"><div><div class="alt-label">Inconsistência identificada</div><textarea class="alt-ta"></textarea></div><div><div class="alt-label">Correção ou decisão do operador</div><textarea class="alt-ta"></textarea></div><div><div class="alt-label">Justificativa</div><textarea class="alt-ta" style="min-height:44px"></textarea></div></div></div>
+    <div class="q-item" id="q8-3"><div class="q-question">Todos os resultados de aprendizagem estão cobertos por níveis e desafios? (10c)</div><div class="q-ctx-label">Resultado da verificação — preenchido pelo FabulusIA</div><textarea class="q-ctx"></textarea><div class="q-actions"><button class="btn-apv" onclick="apvQ('q8-3','cp8',5)">✓ Aprovado</button><button class="btn-alt" onclick="altQ('q8-3','cp8',5)">✎ Registrar pendência</button></div><div class="alt-form" id="af-q8-3"><div><div class="alt-label">Resultado sem cobertura identificado</div><textarea class="alt-ta"></textarea></div><div><div class="alt-label">Correção ou decisão do operador</div><textarea class="alt-ta"></textarea></div><div><div class="alt-label">Justificativa</div><textarea class="alt-ta" style="min-height:44px"></textarea></div></div></div>
+    <div class="q-item" id="q8-4"><div class="q-question">A linguagem, complexidade e estímulos são adequados ao público-alvo em todo o documento? (10d)</div><div class="q-ctx-label">Resultado da verificação — preenchido pelo FabulusIA</div><textarea class="q-ctx"></textarea><div class="q-actions"><button class="btn-apv" onclick="apvQ('q8-4','cp8',5)">✓ Aprovado</button><button class="btn-alt" onclick="altQ('q8-4','cp8',5)">✎ Registrar pendência</button></div><div class="alt-form" id="af-q8-4"><div><div class="alt-label">Elemento inadequado identificado</div><textarea class="alt-ta"></textarea></div><div><div class="alt-label">Correção ou decisão do operador</div><textarea class="alt-ta"></textarea></div><div><div class="alt-label">Justificativa</div><textarea class="alt-ta" style="min-height:44px"></textarea></div></div></div>
+    <div class="q-item" id="q8-5"><div class="q-question">Todas as decisões de design do operador estão registradas com justificativa? (10e)</div><div class="q-ctx-label">Resultado da verificação — preenchido pelo FabulusIA</div><textarea class="q-ctx"></textarea><div class="q-actions"><button class="btn-apv" onclick="apvQ('q8-5','cp8',5)">✓ Aprovado</button><button class="btn-alt" onclick="altQ('q8-5','cp8',5)">✎ Registrar pendência</button></div><div class="alt-form" id="af-q8-5"><div><div class="alt-label">Intervenção sem registro identificada</div><textarea class="alt-ta"></textarea></div><div><div class="alt-label">Correção ou decisão do operador</div><textarea class="alt-ta"></textarea></div><div><div class="alt-label">Justificativa</div><textarea class="alt-ta" style="min-height:44px"></textarea></div></div></div>
+  </div>
+  <div id="approvalBar8">
+    <div class="approval-bar"><div class="approval-bar-text"><strong>Etapa 8 concluída?</strong><p>Ao aprovar, o GDD está liberado para entrega ao usuário.</p></div><div class="approval-bar-actions"><button class="btn-approve" onclick="approveStep(8)">✓ Aprovar e liberar GDD</button></div></div>
+  </div>
+  <div class="final-panel" id="finalPanel" style="display:none">
+    <div class="final-icon">✅</div>
+    <div class="final-title">GDD validado e completo</div>
+    <div class="final-desc">Todas as etapas foram aprovadas. O GDD passou pela verificação final da Seção 10 e está pronto para entrega ao usuário.</div>
+    <div class="summary-grid">
+      <div class="summary-card"><div class="summary-num">6</div><div class="summary-label">Etapas aprovadas</div></div>
+      <div class="summary-card"><div class="summary-num" id="summaryAlts">0</div><div class="summary-label">Alterações registradas</div></div>
+      <div class="summary-card"><div class="summary-num">10</div><div class="summary-label">Seções completas</div></div>
+      <div class="summary-card"><div class="summary-num">100%</div><div class="summary-label">Rastreabilidade</div></div>
+    </div>
+    <button class="btn-approve" style="margin:0 auto">Entregar GDD ao usuário →</button>
+  </div>
+</div>
+
+</div><!-- /editor-col -->
+
+<div class="reference-col">
+  <div class="ref-title">GDD acumulado — referência</div>
+  <div class="ref-section"><div class="ref-section-label">Seção 1 — Visão Geral</div><div class="ref-empty" id="ref_s1"></div></div>
+  <div class="ref-section"><div class="ref-section-label">Seção 2 — Narrativa</div><div class="ref-empty" id="ref_s2"></div></div>
+  <div class="ref-section"><div class="ref-section-label">Seção 3 — Objetivos Pedagógicos</div><div class="ref-empty" id="ref_s3"></div></div>
+  <div class="ref-section"><div class="ref-section-label">Seção 4 — Mecânicas</div><div class="ref-empty" id="ref_s4"></div></div>
+  <div class="ref-section"><div class="ref-section-label">Seção 5 — Desafios</div><div class="ref-empty" id="ref_s5"></div></div>
+  <div class="ref-section"><div class="ref-section-label">Seção 6 — Níveis</div><div class="ref-empty" id="ref_s6"></div></div>
+  <div class="ref-section"><div class="ref-section-label">Seção 7 — Engajamento</div><div class="ref-empty" id="ref_s7"></div></div>
+  <div class="ref-section"><div class="ref-section-label">Seção 8 — Audiovisual</div><div class="ref-empty" id="ref_s8"></div></div>
+  <div class="ref-section"><div class="ref-section-label">Seção 9 — Requisitos Técnicos</div><div class="ref-empty" id="ref_s9"></div></div>
+  <div class="ref-section"><div class="ref-section-label">Seção 10 — Critérios de Qualidade e Validação</div><div class="ref-empty" id="ref_s10"></div></div>
+</div>
+</div><!-- /workspace -->
+
+<div class="changes-panel" id="changesPanel">
+  <div class="changes-panel-title">Registro de alterações</div>
+  <div id="changesList"><div style="font-size:11px;color:var(--text);font-style:italic;text-align:center;padding:20px 0;">Nenhuma alteração registrada ainda.</div></div>
+</div>
+
+<div class="modal-overlay" id="modalOverlay">
+  <div class="modal">
+    <div class="modal-title">Registrar justificativa</div>
+    <div class="modal-desc">Descreva o motivo da alteração. Este registro é obrigatório e alimenta o critério 10e de rastreabilidade do GDD.</div>
+    <div class="modal-orig-label">Texto original</div>
+    <div class="modal-orig" id="modalOrig"></div>
+    <textarea class="modal-ta" id="modalJust" placeholder="Descreva por que este campo foi alterado..."></textarea>
+    <div class="modal-actions">
+      <button class="btn-secondary" onclick="closeModal()">Cancelar</button>
+      <button class="btn-approve" onclick="saveJust()">✓ Confirmar registro</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  let currentStep = 3;
+  const approvedSteps = new Set();
+  const changesLog = [];
+  const qStates = {};
+
+  function goStep(n) {
+    if (n > 3 && !approvedSteps.has(n - 1)) return;
+    document.querySelectorAll('.step-content').forEach(s => s.classList.remove('active'));
+    document.getElementById('step' + n).classList.add('active');
+    document.querySelectorAll('.snav-item').forEach(s => s.classList.remove('active'));
+    document.getElementById('snav' + n).classList.add('active');
+    currentStep = n;
+  }
+
+  function apvQ(qId, cp, total) {
+    const item = document.getElementById(qId);
+    item.classList.remove('altered'); item.classList.add('approved');
+    const af = document.getElementById('af-' + qId);
+    if (af) af.classList.remove('visible');
+    item.querySelectorAll('.btn-apv').forEach(b => b.classList.add('active'));
+    item.querySelectorAll('.btn-alt').forEach(b => b.classList.remove('active'));
+    qStates[qId] = 'approved';
+    updateSummary(cp, total);
+  }
+
+  function altQ(qId, cp, total) {
+    const item = document.getElementById(qId);
+    item.classList.remove('approved'); item.classList.add('altered');
+    const af = document.getElementById('af-' + qId);
+    if (af) af.classList.add('visible');
+    item.querySelectorAll('.btn-alt').forEach(b => b.classList.add('active'));
+    item.querySelectorAll('.btn-apv').forEach(b => b.classList.remove('active'));
+    qStates[qId] = 'altered';
+    updateSummary(cp, total);
+  }
+
+  function updateSummary(cp, total) {
+    const prefix = cp.replace('cp', 'q');
+    let apv = 0, alt = 0;
+    Object.entries(qStates).forEach(([k, v]) => {
+      if (k.startsWith(prefix)) { if (v === 'approved') apv++; else if (v === 'altered') alt++; }
+    });
+    const el = id => document.getElementById(id);
+    if (el(cp + '-approved')) el(cp + '-approved').textContent = apv;
+    if (el(cp + '-altered')) el(cp + '-altered').textContent = alt;
+    if (el(cp + '-pending')) el(cp + '-pending').textContent = total - apv - alt;
+  }
+
+  function approveStep(n) {
+    approvedSteps.add(n);
+    const snav = document.getElementById('snav' + n);
+    snav.classList.remove('active'); snav.classList.add('done');
+    if (n === 8) {
+      document.getElementById('finalPanel').style.display = 'block';
+      document.getElementById('approvalBar8').style.display = 'none';
+      document.getElementById('summaryAlts').textContent = changesLog.length;
+      return;
+    }
+    goStep(n + 1);
+  }
+
+  function toggleChanges() { document.getElementById('changesPanel').classList.toggle('open'); }
+
+  function updateChangesUI() {
+    const count = changesLog.length;
+    document.getElementById('changesCount').textContent = count + (count === 1 ? ' alteração registrada' : ' alterações registradas');
+    document.getElementById('changesDot').classList.toggle('active', count > 0);
+    const list = document.getElementById('changesList');
+    if (!count) { list.innerHTML = '<div style="font-size:11px;color:var(--text);font-style:italic;text-align:center;padding:20px 0;">Nenhuma alteração registrada ainda.</div>'; return; }
+    list.innerHTML = [...changesLog].reverse().map(c => `
+      <div class="change-item">
+        <div class="change-item-step">Etapa ${c.step} · ${c.field}</div>
+        <div class="diff-orig">${(c.orig||'(vazio)').substring(0,100)}</div>
+        <div class="diff-new">${c.novo.substring(0,100)}</div>
+        <div class="change-just">↳ ${c.just}</div>
+      </div>`).join('');
+  }
+
+  let modalCtx = null;
+  function closeModal() { document.getElementById('modalOverlay').classList.remove('open'); modalCtx = null; }
+  function saveJust() {
+    const just = document.getElementById('modalJust').value.trim();
+    if (!just) { alert('Por favor, descreva o motivo da alteração.'); return; }
+    if (modalCtx) { changesLog.push({...modalCtx, just}); updateChangesUI(); }
+    closeModal();
+  }
+
+  document.getElementById('modalOverlay').addEventListener('click', e => { if (e.target === document.getElementById('modalOverlay')) closeModal(); });
+
+  goStep(3);
+</script>
+</body>
+</html>
