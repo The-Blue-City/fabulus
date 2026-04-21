@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>GDD — FabulusIA</title>
+<title>GDD — Fabulus</title>
 <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,300;1,400&display=swap" rel="stylesheet">
 <style>
 :root {
@@ -54,10 +54,10 @@ body {
   border-bottom: 1px solid var(--border);
 }
 
-.logo { display: flex; align-items: center; gap: 10px; margin-bottom: 14px; }
-.logo-mark { width: 30px; height: 30px; background: var(--teal); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-size: 13px; font-weight: 700; font-style: italic; box-shadow: 0 0 12px var(--teal-glow); flex-shrink: 0; }
-.logo-name { font-size: 15px; font-weight: 700; color: var(--text); }
-.logo-name em { color: var(--teal-b); font-style: italic; font-weight: 300; }
+.logo { display: flex; align-items: center; gap: 4px; margin-bottom: 14px; }
+.logo-mark { width: 36px; height: 36px; border-radius: 50%; overflow: hidden; flex-shrink: 0; box-shadow: 0 0 12px var(--teal-glow); border: 2px solid var(--teal); }
+.logo-mark img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.logo-name img { height: 24px; width: auto; display: block; }
 
 .doc-badge { font-size: 9px; font-weight: 700; text-transform: uppercase; letter-spacing: 1.5px; color: var(--teal-b); background: var(--teal-dim); border: 1px solid var(--teal); padding: 3px 10px; border-radius: 20px; display: inline-block; }
 .doc-title { margin-top: 10px; font-size: 13px; font-weight: 700; color: var(--text); line-height: 1.3; }
@@ -224,9 +224,10 @@ body {
 <aside class="sidebar">
   <div class="sidebar-header">
     <div class="logo">
-      <div class="logo-mark">F</div>
-      <div class="logo-name"><span>Fabulus<em>IA</em></span></div>
+      <div class="logo-mark"><img src="data:image/jpeg;base64,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" alt="Fabulus"></div>
+      <div class="logo-name"><img src="data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiPz4KPHN2ZyBpZD0iTGF5ZXJfMSIgZGF0YS1uYW1lPSJMYXllciAxIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZlcnNpb249IjEuMSIgdmlld0JveD0iMCAwIDQ1MyAxNTMiPgogIDxkZWZzPgogICAgPHN0eWxlPgogICAgICAuY2xzLTEgewogICAgICAgIGZpbGw6ICNmZmY7CiAgICAgICAgZm9udC1mYW1pbHk6IENoaWNsZS1SZWd1bGFyLCBDaGljbGU7CiAgICAgICAgZm9udC1zaXplOiAxNDEuN3B4OwogICAgICB9CiAgICA8L3N0eWxlPgogIDwvZGVmcz4KICA8dGV4dCBjbGFzcz0iY2xzLTEiIHRyYW5zZm9ybT0idHJhbnNsYXRlKDIwLjEgMTIzKSI+PHRzcGFuIHg9IjAiIHk9IjAiPkZBQlVMVVM8L3RzcGFuPjwvdGV4dD4KPC9zdmc+" alt="FABULUS"></div>
     </div>
+    <div style="font-size:9px;font-weight:600;color:var(--teal-b);letter-spacing:0.4px;margin-bottom:10px;line-height:1.4;">Fluxo Governado de Geração de<br>Game Design Documents</div>
     <div class="doc-badge">Game Design Document</div>
     <div class="doc-title" id="sidebarTitle">—</div>
   </div>
@@ -340,7 +341,7 @@ body {
 
 <div class="content">
   <div class="topbar">
-    <div class="topbar-breadcrumb">FabulusIA → <span id="breadcrumbSection">Premissas</span></div>
+    <div class="topbar-breadcrumb">Fabulus → <span id="breadcrumbSection">Premissas</span></div>
     <div class="topbar-actions">
       <span class="chip chip-teal">GDD Completo</span>
       <span class="chip chip-green">10 Seções</span>
@@ -357,32 +358,32 @@ body {
 
       <div class="info-card">
         <div class="info-card-header"><div class="info-card-icon icon-teal">👥</div><div><div class="info-card-title">Quem vai jogar</div><div class="info-card-subtitle">Perfil do público-alvo declarado e interpretado</div></div></div>
-        <div class="info-card-body" id="p-quem">Conteúdo gerado pelo FabulusIA</div>
+        <div class="info-card-body" id="p-quem">Conteúdo gerado pelo Fabulus</div>
       </div>
 
       <div class="info-card">
         <div class="info-card-header"><div class="info-card-icon icon-sage">🔬</div><div><div class="info-card-title">O que foi pesquisado para construir este jogo</div><div class="info-card-subtitle">Base de conhecimento e fontes consultadas</div></div></div>
-        <div class="info-card-body" id="p-pesquisado">Conteúdo gerado pelo FabulusIA</div>
+        <div class="info-card-body" id="p-pesquisado">Conteúdo gerado pelo Fabulus</div>
       </div>
 
       <div class="info-card">
         <div class="info-card-header"><div class="info-card-icon icon-teal">📚</div><div><div class="info-card-title">O que o jogador vai aprender</div><div class="info-card-subtitle">Resultado de aprendizagem esperado ao final</div></div></div>
-        <div class="info-card-body" id="p-aprender">Conteúdo gerado pelo FabulusIA</div>
+        <div class="info-card-body" id="p-aprender">Conteúdo gerado pelo Fabulus</div>
       </div>
 
       <div class="info-card">
         <div class="info-card-header"><div class="info-card-icon icon-amber">💡</div><div><div class="info-card-title">Por que este jogo importa</div><div class="info-card-subtitle">Relevância do tema para o público e para o contexto social</div></div></div>
-        <div class="info-card-body" id="p-importa">Conteúdo gerado pelo FabulusIA</div>
+        <div class="info-card-body" id="p-importa">Conteúdo gerado pelo Fabulus</div>
       </div>
 
       <div class="two-col">
         <div class="info-card" style="margin-bottom:0">
           <div class="info-card-header"><div class="info-card-icon icon-steel">🗂️</div><div><div class="info-card-title">Estrutura do jogo</div><div class="info-card-subtitle">Organização em etapas e níveis</div></div></div>
-          <div class="info-card-body" id="p-estrutura">Conteúdo gerado pelo FabulusIA</div>
+          <div class="info-card-body" id="p-estrutura">Conteúdo gerado pelo Fabulus</div>
         </div>
         <div class="info-card" style="margin-bottom:0">
           <div class="info-card-header"><div class="info-card-icon icon-steel">💻</div><div><div class="info-card-title">Requisitos técnicos</div><div class="info-card-subtitle">Plataforma, engine e especificações</div></div></div>
-          <div class="info-card-body" id="p-requisitos">Conteúdo gerado pelo FabulusIA</div>
+          <div class="info-card-body" id="p-requisitos">Conteúdo gerado pelo Fabulus</div>
         </div>
       </div>
 
@@ -424,22 +425,22 @@ body {
       <div class="two-col">
         <div class="info-card" style="margin-bottom:0">
           <div class="info-card-header"><div class="info-card-icon icon-sage">🏛️</div><div><div class="info-card-title">Contexto de uso</div><div class="info-card-subtitle">Ambiente e condições de aplicação</div></div></div>
-          <div class="info-card-body" id="p-contexto">Conteúdo gerado pelo FabulusIA</div>
+          <div class="info-card-body" id="p-contexto">Conteúdo gerado pelo Fabulus</div>
         </div>
         <div class="info-card" style="margin-bottom:0">
           <div class="info-card-header"><div class="info-card-icon icon-amber">🎨</div><div><div class="info-card-title">Tom narrativo e identidade visual</div><div class="info-card-subtitle">Linguagem e estética do projeto</div></div></div>
-          <div class="info-card-body" id="p-tom">Conteúdo gerado pelo FabulusIA</div>
+          <div class="info-card-body" id="p-tom">Conteúdo gerado pelo Fabulus</div>
         </div>
       </div>
 
       <div class="two-col" style="margin-top:20px">
         <div class="info-card" style="margin-bottom:0">
           <div class="info-card-header"><div class="info-card-icon icon-steel">📎</div><div><div class="info-card-title">Informações adicionais</div><div class="info-card-subtitle">Outros dados relevantes do projeto</div></div></div>
-          <div class="info-card-body" id="p-adicionais">Conteúdo gerado pelo FabulusIA</div>
+          <div class="info-card-body" id="p-adicionais">Conteúdo gerado pelo Fabulus</div>
         </div>
         <div class="info-card" style="margin-bottom:0">
           <div class="info-card-header"><div class="info-card-icon icon-green">✅</div><div><div class="info-card-title">Compatibilidade com o projeto</div><div class="info-card-subtitle">Alinhamento com objetivos institucionais</div></div></div>
-          <div class="info-card-body" id="p-compatibilidade">Conteúdo gerado pelo FabulusIA</div>
+          <div class="info-card-body" id="p-compatibilidade">Conteúdo gerado pelo Fabulus</div>
         </div>
       </div>
     </div>
@@ -449,7 +450,7 @@ body {
 
       <!-- HERO -->
       <div class="hero">
-        <div class="hero-cap">Game Design Document — FabulusIA</div>
+        <div class="hero-cap">Game Design Document — Fabulus</div>
         <div class="hero-title" id="s1-titulo">Título do jogo</div>
         <div class="hero-subtitle" id="s1-conceito-hero">Conceito central do jogo</div>
         <div class="hero-meta">
@@ -464,7 +465,7 @@ body {
           <div class="info-card-icon icon-teal">🎮</div>
           <div><div class="info-card-title">Conceito central</div><div class="info-card-subtitle">A ideia central que define o jogo</div></div>
         </div>
-        <div class="info-card-body" id="s1-conceito">Conteúdo gerado pelo FabulusIA</div>
+        <div class="info-card-body" id="s1-conceito">Conteúdo gerado pelo Fabulus</div>
       </div>
 
       <!-- Gênero narrativo + Público-alvo lado a lado -->
@@ -474,14 +475,14 @@ body {
             <div class="info-card-icon icon-sage">🎭</div>
             <div><div class="info-card-title">Gênero narrativo</div><div class="info-card-subtitle">Categoria e estilo narrativo</div></div>
           </div>
-          <div class="info-card-body" id="s1-genero">Conteúdo gerado pelo FabulusIA</div>
+          <div class="info-card-body" id="s1-genero">Conteúdo gerado pelo Fabulus</div>
         </div>
         <div class="info-card" style="margin-bottom:0">
           <div class="info-card-header">
             <div class="info-card-icon icon-teal">👥</div>
             <div><div class="info-card-title">Público-alvo</div><div class="info-card-subtitle">Faixa etária, nível e contexto de uso</div></div>
           </div>
-          <div class="info-card-body" id="s1-publico">Conteúdo gerado pelo FabulusIA</div>
+          <div class="info-card-body" id="s1-publico">Conteúdo gerado pelo Fabulus</div>
         </div>
       </div>
 
@@ -491,7 +492,7 @@ body {
           <div class="info-card-icon icon-amber">🎯</div>
           <div><div class="info-card-title">Objetivos do jogo</div><div class="info-card-subtitle">Entretenimento e aprendizagem</div></div>
         </div>
-        <div class="info-card-body" id="s1-objetivos">Conteúdo gerado pelo FabulusIA</div>
+        <div class="info-card-body" id="s1-objetivos">Conteúdo gerado pelo Fabulus</div>
       </div>
 
       <!-- Plataforma e formato -->
@@ -500,7 +501,7 @@ body {
           <div class="info-card-icon icon-steel">💻</div>
           <div><div class="info-card-title">Plataforma e formato</div><div class="info-card-subtitle">Ambiente de execução e tipo de jogo</div></div>
         </div>
-        <div class="info-card-body" id="s1-plataforma">Conteúdo gerado pelo FabulusIA</div>
+        <div class="info-card-body" id="s1-plataforma">Conteúdo gerado pelo Fabulus</div>
       </div>
 
     </div>
@@ -509,96 +510,96 @@ body {
     <div class="section" id="section-s2">
       <div class="page-cap">Seção 2</div>
       <div class="page-title">Narrativa</div>
-      <div class="content-block"><div class="block-subtitle">Premissa e cenário</div><div class="block-text">Conteúdo gerado pelo FabulusIA</div></div>
-      <div class="content-block"><div class="block-subtitle">Plot geral</div><div class="block-text">Conteúdo gerado pelo FabulusIA</div></div>
-      <div class="content-block"><div class="block-subtitle">Personagens principais</div><div class="block-text">Conteúdo gerado pelo FabulusIA</div></div>
-      <div class="content-block"><div class="block-subtitle">Estrutura de cenas e eventos narrativos</div><div class="block-text">Conteúdo gerado pelo FabulusIA</div></div>
-      <div class="content-block"><div class="block-subtitle">Caminhos ramificados e escolhas do jogador com impacto na narrativa</div><div class="block-text">Conteúdo gerado pelo FabulusIA</div></div>
-      <div class="content-block"><div class="block-subtitle">Lore e worldbuilding</div><div class="block-text">Conteúdo gerado pelo FabulusIA</div></div>
+      <div class="content-block"><div class="block-subtitle">Premissa e cenário</div><div class="block-text">Conteúdo gerado pelo Fabulus</div></div>
+      <div class="content-block"><div class="block-subtitle">Plot geral</div><div class="block-text">Conteúdo gerado pelo Fabulus</div></div>
+      <div class="content-block"><div class="block-subtitle">Personagens principais</div><div class="block-text">Conteúdo gerado pelo Fabulus</div></div>
+      <div class="content-block"><div class="block-subtitle">Estrutura de cenas e eventos narrativos</div><div class="block-text">Conteúdo gerado pelo Fabulus</div></div>
+      <div class="content-block"><div class="block-subtitle">Caminhos ramificados e escolhas do jogador com impacto na narrativa</div><div class="block-text">Conteúdo gerado pelo Fabulus</div></div>
+      <div class="content-block"><div class="block-subtitle">Lore e worldbuilding</div><div class="block-text">Conteúdo gerado pelo Fabulus</div></div>
     </div>
 
     <!-- SEÇÃO 3 -->
     <div class="section" id="section-s3">
       <div class="page-cap">Seção 3</div>
       <div class="page-title">Objetivos Pedagógicos</div>
-      <div class="content-block"><div class="block-subtitle">Conhecimento prévio requerido</div><div class="block-text">Conteúdo gerado pelo FabulusIA</div></div>
-      <div class="content-block"><div class="block-subtitle">Conhecimento a ser adquirido durante o jogo</div><div class="block-text">Conteúdo gerado pelo FabulusIA</div></div>
-      <div class="content-block"><div class="block-subtitle">Conhecimento potencial além do escopo direto</div><div class="block-text">Conteúdo gerado pelo FabulusIA</div></div>
-      <div class="content-block"><div class="block-subtitle">Resultados de aprendizagem por nível</div><div class="block-text">Conteúdo gerado pelo FabulusIA</div></div>
-      <div class="content-block"><div class="block-subtitle">Princípios instrucionais adotados</div><div class="block-text">Conteúdo gerado pelo FabulusIA</div></div>
+      <div class="content-block"><div class="block-subtitle">Conhecimento prévio requerido</div><div class="block-text">Conteúdo gerado pelo Fabulus</div></div>
+      <div class="content-block"><div class="block-subtitle">Conhecimento a ser adquirido durante o jogo</div><div class="block-text">Conteúdo gerado pelo Fabulus</div></div>
+      <div class="content-block"><div class="block-subtitle">Conhecimento potencial além do escopo direto</div><div class="block-text">Conteúdo gerado pelo Fabulus</div></div>
+      <div class="content-block"><div class="block-subtitle">Resultados de aprendizagem por nível</div><div class="block-text">Conteúdo gerado pelo Fabulus</div></div>
+      <div class="content-block"><div class="block-subtitle">Princípios instrucionais adotados</div><div class="block-text">Conteúdo gerado pelo Fabulus</div></div>
     </div>
 
     <!-- SEÇÃO 4 -->
     <div class="section" id="section-s4">
       <div class="page-cap">Seção 4</div>
       <div class="page-title">Mecânicas de Jogo</div>
-      <div class="content-block"><div class="block-subtitle">Regras fundamentais</div><div class="block-text">Conteúdo gerado pelo FabulusIA</div></div>
-      <div class="content-block"><div class="block-subtitle">Controladores e ações disponíveis ao jogador</div><div class="block-text">Conteúdo gerado pelo FabulusIA</div></div>
-      <div class="content-block"><div class="block-subtitle">Sistema de progressão</div><div class="block-text">Conteúdo gerado pelo FabulusIA</div></div>
-      <div class="content-block"><div class="block-subtitle">Balanceamento entre habilidade e desafio (curva de Flow)</div><div class="block-text">Conteúdo gerado pelo FabulusIA</div></div>
+      <div class="content-block"><div class="block-subtitle">Regras fundamentais</div><div class="block-text">Conteúdo gerado pelo Fabulus</div></div>
+      <div class="content-block"><div class="block-subtitle">Controladores e ações disponíveis ao jogador</div><div class="block-text">Conteúdo gerado pelo Fabulus</div></div>
+      <div class="content-block"><div class="block-subtitle">Sistema de progressão</div><div class="block-text">Conteúdo gerado pelo Fabulus</div></div>
+      <div class="content-block"><div class="block-subtitle">Balanceamento entre habilidade e desafio (curva de Flow)</div><div class="block-text">Conteúdo gerado pelo Fabulus</div></div>
     </div>
 
     <!-- SEÇÃO 5 -->
     <div class="section" id="section-s5">
       <div class="page-cap">Seção 5</div>
       <div class="page-title">Desafios e Objetivos</div>
-      <div class="content-block"><div class="block-subtitle">Lista de desafios com parâmetros mensuráveis</div><div class="block-text">Conteúdo gerado pelo FabulusIA</div></div>
-      <div class="content-block"><div class="block-subtitle">Metas que o jogador deve cumprir</div><div class="block-text">Conteúdo gerado pelo FabulusIA</div></div>
-      <div class="content-block"><div class="block-subtitle">Relação entre desafios, metas e progressão narrativa</div><div class="block-text">Conteúdo gerado pelo FabulusIA</div></div>
-      <div class="content-block"><div class="block-subtitle">Vinculação entre desafio e resultado de aprendizagem</div><div class="block-text">Conteúdo gerado pelo FabulusIA</div></div>
+      <div class="content-block"><div class="block-subtitle">Lista de desafios com parâmetros mensuráveis</div><div class="block-text">Conteúdo gerado pelo Fabulus</div></div>
+      <div class="content-block"><div class="block-subtitle">Metas que o jogador deve cumprir</div><div class="block-text">Conteúdo gerado pelo Fabulus</div></div>
+      <div class="content-block"><div class="block-subtitle">Relação entre desafios, metas e progressão narrativa</div><div class="block-text">Conteúdo gerado pelo Fabulus</div></div>
+      <div class="content-block"><div class="block-subtitle">Vinculação entre desafio e resultado de aprendizagem</div><div class="block-text">Conteúdo gerado pelo Fabulus</div></div>
     </div>
 
     <!-- SEÇÃO 6 -->
     <div class="section" id="section-s6">
       <div class="page-cap">Seção 6</div>
       <div class="page-title">Níveis</div>
-      <div class="content-block"><div class="block-subtitle">Estrutura e sequência de níveis</div><div class="block-text">Conteúdo gerado pelo FabulusIA</div></div>
-      <div class="content-block"><div class="block-subtitle">Conhecimento requerido, entregue e testado por nível</div><div class="block-text">Conteúdo gerado pelo FabulusIA</div></div>
-      <div class="content-block"><div class="block-subtitle">Ordem pedagógica dos níveis</div><div class="block-text">Conteúdo gerado pelo FabulusIA</div></div>
-      <div class="content-block"><div class="block-subtitle">Metas e desafios associados a cada nível</div><div class="block-text">Conteúdo gerado pelo FabulusIA</div></div>
+      <div class="content-block"><div class="block-subtitle">Estrutura e sequência de níveis</div><div class="block-text">Conteúdo gerado pelo Fabulus</div></div>
+      <div class="content-block"><div class="block-subtitle">Conhecimento requerido, entregue e testado por nível</div><div class="block-text">Conteúdo gerado pelo Fabulus</div></div>
+      <div class="content-block"><div class="block-subtitle">Ordem pedagógica dos níveis</div><div class="block-text">Conteúdo gerado pelo Fabulus</div></div>
+      <div class="content-block"><div class="block-subtitle">Metas e desafios associados a cada nível</div><div class="block-text">Conteúdo gerado pelo Fabulus</div></div>
     </div>
 
     <!-- SEÇÃO 7 -->
     <div class="section" id="section-s7">
       <div class="page-cap">Seção 7</div>
       <div class="page-title">Elementos de Engajamento</div>
-      <div class="content-block"><div class="block-subtitle">Fantasy</div><div class="block-text">Conteúdo gerado pelo FabulusIA</div></div>
-      <div class="content-block"><div class="block-subtitle">Mystery / Curiosidade</div><div class="block-text">Conteúdo gerado pelo FabulusIA</div></div>
-      <div class="content-block"><div class="block-subtitle">Estímulos sensoriais</div><div class="block-text">Conteúdo gerado pelo FabulusIA</div></div>
-      <div class="content-block"><div class="block-subtitle">Sistema de recompensas e punições</div><div class="block-text">Conteúdo gerado pelo FabulusIA</div></div>
-      <div class="content-block"><div class="block-subtitle">Feedback ao jogador</div><div class="block-text">Conteúdo gerado pelo FabulusIA</div></div>
-      <div class="content-block"><div class="block-subtitle">Motivação intrínseca e extrínseca</div><div class="block-text">Conteúdo gerado pelo FabulusIA</div></div>
+      <div class="content-block"><div class="block-subtitle">Fantasy</div><div class="block-text">Conteúdo gerado pelo Fabulus</div></div>
+      <div class="content-block"><div class="block-subtitle">Mystery / Curiosidade</div><div class="block-text">Conteúdo gerado pelo Fabulus</div></div>
+      <div class="content-block"><div class="block-subtitle">Estímulos sensoriais</div><div class="block-text">Conteúdo gerado pelo Fabulus</div></div>
+      <div class="content-block"><div class="block-subtitle">Sistema de recompensas e punições</div><div class="block-text">Conteúdo gerado pelo Fabulus</div></div>
+      <div class="content-block"><div class="block-subtitle">Feedback ao jogador</div><div class="block-text">Conteúdo gerado pelo Fabulus</div></div>
+      <div class="content-block"><div class="block-subtitle">Motivação intrínseca e extrínseca</div><div class="block-text">Conteúdo gerado pelo Fabulus</div></div>
     </div>
 
     <!-- SEÇÃO 8 -->
     <div class="section" id="section-s8">
       <div class="page-cap">Seção 8</div>
       <div class="page-title">Conteúdo Audiovisual</div>
-      <div class="content-block"><div class="block-subtitle">Diretrizes visuais</div><div class="block-text">Conteúdo gerado pelo FabulusIA</div></div>
-      <div class="content-block"><div class="block-subtitle">Diretrizes de áudio</div><div class="block-text">Conteúdo gerado pelo FabulusIA</div></div>
-      <div class="content-block"><div class="block-subtitle">Textos in-game e diálogos detalhados por cena</div><div class="block-text">Conteúdo gerado pelo FabulusIA</div></div>
-      <div class="content-block"><div class="block-subtitle">Cutscenes e cinemáticas</div><div class="block-text">Conteúdo gerado pelo FabulusIA</div></div>
+      <div class="content-block"><div class="block-subtitle">Diretrizes visuais</div><div class="block-text">Conteúdo gerado pelo Fabulus</div></div>
+      <div class="content-block"><div class="block-subtitle">Diretrizes de áudio</div><div class="block-text">Conteúdo gerado pelo Fabulus</div></div>
+      <div class="content-block"><div class="block-subtitle">Textos in-game e diálogos detalhados por cena</div><div class="block-text">Conteúdo gerado pelo Fabulus</div></div>
+      <div class="content-block"><div class="block-subtitle">Cutscenes e cinemáticas</div><div class="block-text">Conteúdo gerado pelo Fabulus</div></div>
     </div>
 
     <!-- SEÇÃO 9 -->
     <div class="section" id="section-s9">
       <div class="page-cap">Seção 9</div>
       <div class="page-title">Requisitos Técnicos</div>
-      <div class="content-block"><div class="block-subtitle">Plataforma de desenvolvimento</div><div class="block-text">Conteúdo gerado pelo FabulusIA</div></div>
-      <div class="content-block"><div class="block-subtitle">Ferramentas e engines</div><div class="block-text">Conteúdo gerado pelo FabulusIA</div></div>
-      <div class="content-block"><div class="block-subtitle">Requisitos de sistema</div><div class="block-text">Conteúdo gerado pelo FabulusIA</div></div>
-      <div class="content-block"><div class="block-subtitle">Arquitetura de dados</div><div class="block-text">Conteúdo gerado pelo FabulusIA</div></div>
+      <div class="content-block"><div class="block-subtitle">Plataforma de desenvolvimento</div><div class="block-text">Conteúdo gerado pelo Fabulus</div></div>
+      <div class="content-block"><div class="block-subtitle">Ferramentas e engines</div><div class="block-text">Conteúdo gerado pelo Fabulus</div></div>
+      <div class="content-block"><div class="block-subtitle">Requisitos de sistema</div><div class="block-text">Conteúdo gerado pelo Fabulus</div></div>
+      <div class="content-block"><div class="block-subtitle">Arquitetura de dados</div><div class="block-text">Conteúdo gerado pelo Fabulus</div></div>
     </div>
 
     <!-- SEÇÃO 10 -->
     <div class="section" id="section-s10">
       <div class="page-cap">Seção 10</div>
       <div class="page-title">Critérios de Qualidade e Validação</div>
-      <div class="content-block"><div class="block-subtitle">Completude do documento</div><div class="block-text">Conteúdo gerado pelo FabulusIA</div></div>
-      <div class="content-block"><div class="block-subtitle">Consistência interna</div><div class="block-text">Conteúdo gerado pelo FabulusIA</div></div>
-      <div class="content-block"><div class="block-subtitle">Aderência aos resultados de aprendizagem</div><div class="block-text">Conteúdo gerado pelo FabulusIA</div></div>
-      <div class="content-block"><div class="block-subtitle">Adequação ao público-alvo</div><div class="block-text">Conteúdo gerado pelo FabulusIA</div></div>
-      <div class="content-block"><div class="block-subtitle">Rastreabilidade das decisões de design</div><div class="block-text">Conteúdo gerado pelo FabulusIA</div></div>
+      <div class="content-block"><div class="block-subtitle">Completude do documento</div><div class="block-text">Conteúdo gerado pelo Fabulus</div></div>
+      <div class="content-block"><div class="block-subtitle">Consistência interna</div><div class="block-text">Conteúdo gerado pelo Fabulus</div></div>
+      <div class="content-block"><div class="block-subtitle">Aderência aos resultados de aprendizagem</div><div class="block-text">Conteúdo gerado pelo Fabulus</div></div>
+      <div class="content-block"><div class="block-subtitle">Adequação ao público-alvo</div><div class="block-text">Conteúdo gerado pelo Fabulus</div></div>
+      <div class="content-block"><div class="block-subtitle">Rastreabilidade das decisões de design</div><div class="block-text">Conteúdo gerado pelo Fabulus</div></div>
     </div>
 
   </div><!-- /main -->
