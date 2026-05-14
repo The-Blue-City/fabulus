@@ -1,0 +1,1928 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Game Design Document — Fabulus</title>
+
+<!-- Open Graph (WhatsApp, Facebook, LinkedIn) -->
+<meta property="og:type" content="article">
+<meta property="og:title" content="Template GDD · Fabulus">
+<meta property="og:description" content="Estrutura padrão de Game Design Document gerada pelo Fabulus — fluxo governado de geração de GDDs.">
+<meta property="og:image" content="./fabulus-og.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Fabulus — Fluxo Governado de Geração de Game Design Documents">
+<meta property="og:locale" content="pt_BR">
+<meta property="og:site_name" content="Fabulus">
+
+<!-- Twitter Card -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Template GDD · Fabulus">
+<meta name="twitter:description" content="Estrutura padrão de Game Design Document gerada pelo Fabulus.">
+<meta name="twitter:image" content="./fabulus-og.jpg">
+
+<!-- Descrição genérica para outros crawlers -->
+<meta name="description" content="Estrutura padrão de Game Design Document gerada pelo Fabulus — fluxo governado de geração de GDDs.">
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,300;1,400&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:        #1a2a38;
+  --bg2:       #14202c;
+  --bg3:       #0f1820;
+  --surface:   #243344;
+  --surface3:  #2e3f52;
+  --teal:      #0c7679;
+  --teal-b:    #10999d;
+  --teal-c:    #14bbbf;
+  --teal-dim:  rgba(12,118,121,0.14);
+  --teal-glow: rgba(12,118,121,0.3);
+  --green:     #2eb87e;
+  --green-dim: rgba(46,184,126,0.10);
+  --border:    rgba(12,118,121,0.2);
+  --border2:   rgba(255,255,255,0.07);
+  --text:      #ffffff;
+  --radius:    10px;
+  --radius-lg: 16px;
+}
+
+* { margin:0; padding:0; box-sizing:border-box; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Montserrat', sans-serif;
+  font-size: 14px;
+  line-height: 1.7;
+  min-height: 100vh;
+  display: flex;
+}
+
+/* ── SIDEBAR ── */
+.sidebar {
+  width: 272px; flex-shrink: 0;
+  background: var(--bg3);
+  border-right: 1px solid var(--border);
+  position: fixed; top: 0; left: 0;
+  height: 100vh; overflow-y: auto;
+  display: flex; flex-direction: column;
+  z-index: 50;
+}
+
+.sidebar-header {
+  padding: 24px 22px 18px;
+  border-bottom: 1px solid var(--border);
+}
+
+.logo { display: flex; align-items: center; gap: 4px; margin-bottom: 14px; }
+.logo-mark { width: 36px; height: 36px; border-radius: 50%; overflow: hidden; flex-shrink: 0; box-shadow: 0 0 12px var(--teal-glow); border: 2px solid var(--teal); }
+.logo-mark img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.logo-name img { height: 24px; width: auto; display: block; }
+
+.doc-badge { font-size: 9px; font-weight: 700; text-transform: uppercase; letter-spacing: 1.5px; color: var(--teal-b); background: var(--teal-dim); border: 1px solid var(--teal); padding: 3px 10px; border-radius: 20px; display: inline-block; }
+.doc-title { margin-top: 10px; font-size: 13px; font-weight: 700; color: var(--text); line-height: 1.3; }
+
+/* ── NAV ── */
+.nav { padding: 12px 0; flex: 1; }
+.nav-group { margin-bottom: 6px; }
+
+.nav-section-title {
+  display: block;
+  padding: 8px 22px 6px;
+  cursor: pointer;
+  font-size: 9px; font-weight: 700;
+  text-transform: uppercase; letter-spacing: 1.5px;
+  color: var(--teal-b);
+  border-left: 2px solid transparent;
+  transition: all 0.15s;
+}
+.nav-section-title:hover { color: var(--teal-c); background: var(--teal-dim); border-left-color: var(--teal); }
+.nav-section-title.active { color: var(--teal-c); background: var(--teal-dim); border-left-color: var(--teal-b); }
+
+.nav-sub {
+  display: flex; align-items: flex-start; gap: 7px;
+  padding: 4px 22px 4px 34px;
+  font-size: 11px; font-weight: 400;
+  color: #ffffff; opacity: 0.7;
+  line-height: 1.5;
+  cursor: pointer;
+  transition: color 0.15s, background 0.15s, opacity 0.15s;
+}
+.nav-sub:hover { color: var(--teal-c); background: rgba(12,118,121,0.12); opacity: 1; }
+.nav-sub.active { color: var(--teal-c); opacity: 1; background: rgba(12,118,121,0.18); }
+.nav-sub::before { content: '•'; color: var(--teal-b); flex-shrink: 0; font-size: 12px; }
+
+/* ── SIDEBAR FOOTER ── */
+.sidebar-footer { padding: 14px 22px; border-top: 1px solid var(--border); }
+.score-mini { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 6px; }
+.score-token { background: var(--surface3); border: 1px solid var(--border2); border-radius: 8px; padding: 8px 6px; text-align: center; }
+.score-token-icon { font-size: 16px; }
+.score-token-pts { font-size: 10px; font-weight: 700; color: var(--text); display: block; margin-top: 2px; }
+.score-token-label { font-size: 9px; color: rgba(255,255,255,0.75); font-weight: 500; }
+
+/* ── MAIN ── */
+.content { margin-left: 272px; flex: 1; min-height: 100vh; display: flex; flex-direction: column; }
+
+.topbar {
+  background: var(--bg2); border-bottom: 1px solid var(--border);
+  padding: 0 48px; height: 56px;
+  display: flex; align-items: center; gap: 12px;
+  position: sticky; top: 0; z-index: 40;
+}
+.topbar-breadcrumb { font-size: 11px; color: var(--text); font-weight: 500; flex: 1; }
+.topbar-breadcrumb span { color: var(--teal-b); font-weight: 700; }
+.topbar-actions { display: flex; gap: 10px; align-items: center; }
+.chip { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.8px; padding: 4px 12px; border-radius: 20px; }
+.chip-teal { color: var(--teal-b); background: var(--teal-dim); border: 1px solid var(--teal); }
+.chip-green { color: var(--green); background: var(--green-dim); border: 1px solid rgba(46,184,126,0.3); }
+.btn-pdf { display: inline-flex; align-items: center; gap: 8px; padding: 9px 20px; border-radius: var(--radius); font-family: 'Montserrat', sans-serif; font-size: 11px; font-weight: 700; cursor: pointer; transition: all 0.2s; border: none; outline: none; letter-spacing: 0.8px; text-transform: uppercase; background: var(--green); color: white; }
+.btn-pdf:hover { background: #28c880; transform: translateY(-1px); }
+
+.main { padding: 52px 52px 80vh; max-width: 860px; flex: 1; overflow-y: auto; }
+
+/* ────────────────────────────────────────────────────────
+   RESPONSIVIDADE: sidebar colapsável em telas <1024px
+   ──────────────────────────────────────────────────────── */
+
+/* Botão hamburger — escondido em desktop, aparece em mobile/tablet */
+.menu-toggle {
+  display: none;
+  background: transparent;
+  border: 1px solid var(--border2);
+  color: var(--text);
+  width: 36px; height: 36px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 18px;
+  align-items: center; justify-content: center;
+  margin-right: 12px;
+  flex-shrink: 0;
+}
+.menu-toggle:hover { background: var(--teal-dim); border-color: var(--teal); color: var(--teal-c); }
+
+/* Overlay escuro atrás da sidebar (mobile) */
+.sidebar-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.55);
+  z-index: 45;
+  opacity: 0;
+  transition: opacity 0.25s ease;
+}
+.sidebar-overlay.is-open { display: block; opacity: 1; }
+
+@media (max-width: 1023px) {
+  /* Sidebar escondida por padrão */
+  .sidebar {
+    transform: translateX(-100%);
+    transition: transform 0.28s ease;
+    box-shadow: 4px 0 16px rgba(0,0,0,0.4);
+  }
+  .sidebar.is-open { transform: translateX(0); }
+
+  /* Conteúdo principal usa largura total */
+  .content { margin-left: 0; }
+  .main { padding: 32px 24px 80vh; max-width: none; }
+
+  /* Topbar com hamburger visível */
+  .topbar { padding: 0 20px; }
+  .menu-toggle { display: inline-flex; }
+
+  /* Esconder chips para economizar espaço, manter só botão PDF */
+  .topbar-actions .chip { display: none; }
+  .btn-pdf { padding: 8px 14px; font-size: 10px; }
+
+  /* Hero e título reduzem em tablet */
+  .page-title { font-size: 28px; }
+
+  /* Tabelas grandes ganham scroll horizontal */
+  .data-table-wrap { overflow-x: auto; }
+  .choice-table { min-width: 600px; }
+}
+
+@media (max-width: 640px) {
+  /* Mobile pequeno — ajustes adicionais */
+  .main { padding: 24px 16px 80vh; }
+  .page-title { font-size: 24px; line-height: 1.2; }
+  .page-cap { font-size: 11px; }
+
+  /* Hero menor */
+  .hero { padding: 24px 20px; }
+  .hero-title { font-size: 26px; }
+  .hero-subtitle { font-size: 15px; }
+
+  /* Cards com padding menor */
+  .info-card, .content-block { padding: 18px 18px !important; }
+  .info-card-body { padding: 18px 18px; }
+  .content-block:has(> .block-subtitle-card) { padding: 18px 18px; }
+  .block-subtitle-card { margin: -18px -18px 14px; padding: 16px 18px 12px; }
+
+  /* Sub-cards e cenas */
+  .sub-card, .scene-box, .quiz-question, .cutscene-box { padding: 14px 16px !important; }
+  .iface-box { padding: 8px 12px; font-size: 11px; }
+
+  /* Two-col vira coluna única em mobile pequeno */
+  .two-col { grid-template-columns: 1fr; }
+
+  /* Level grid e flow grid empilham */
+  .level-grid, .flow-grid { grid-template-columns: 1fr; }
+
+  /* Topbar header e ações empilham */
+  .topbar { height: auto; padding: 12px 16px; gap: 8px; }
+  .topbar-breadcrumb { font-size: 10px; }
+  .btn-pdf { padding: 7px 12px; font-size: 9px; }
+
+  /* Sidebar — em telas pequenas ocupa quase toda a largura quando aberta */
+  .sidebar { width: 85vw; max-width: 320px; }
+
+  /* Tooltips se ajustam */
+  .tip-content { width: 240px; font-size: 11px; }
+}
+
+/* ── SECTIONS ── */
+.section { display: none; animation: fadeIn 0.25s ease; }
+.section.active { display: block; }
+@keyframes fadeIn { from { opacity:0; transform:translateY(6px); } to { opacity:1; transform:translateY(0); } }
+
+/* ── PAGE LAYOUT ── */
+.page-cap {
+  font-size: 10px; font-weight: 700;
+  text-transform: uppercase; letter-spacing: 3px;
+  color: var(--teal-b); margin-bottom: 10px;
+}
+.page-title {
+  font-size: 34px; font-weight: 800;
+  color: var(--text); letter-spacing: -0.8px; line-height: 1.1;
+  margin-bottom: 40px;
+  padding-bottom: 22px;
+  border-bottom: 1px solid var(--border);
+}
+.content-block {
+  margin-bottom: 36px;
+}
+.content-block:last-child { margin-bottom: 0; }
+.block-subtitle {
+  font-size: 12px; font-weight: 700;
+  text-transform: uppercase; letter-spacing: 0.8px;
+  color: var(--text);
+  margin-bottom: 10px;
+  padding-bottom: 7px;
+  border-bottom: 1px solid var(--border2);
+}
+
+/* ── BLOCK SUBTITLE CARD (estilo S1 info-card-header para Seções 2-10) ── */
+
+/* Content-block com header virou uma moldura unificada que envolve TUDO */
+.content-block:has(> .block-subtitle-card) {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 22px 26px;
+  margin-bottom: 18px;
+}
+
+.block-subtitle-card {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin: -22px -26px 18px;  /* compensa o padding do content-block para o header ocupar toda a largura */
+  padding: 22px 26px 16px;
+  border-bottom: 1px solid var(--border2);
+}
+
+/* Quando block-text vem dentro do content-block unificado, perde seu fundo/borda */
+.content-block:has(> .block-subtitle-card) > .block-text {
+  background: transparent;
+  border: none;
+  border-radius: 0;
+  padding: 0;
+  margin-bottom: 16px;
+}
+.content-block:has(> .block-subtitle-card) > .block-text:last-child {
+  margin-bottom: 0;
+}
+.block-icon {
+  width: 44px; height: 44px;
+  border-radius: 10px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 22px;
+  flex-shrink: 0;
+  border: 1px solid;
+}
+.block-icon.icon-teal  { background: rgba(20,187,191,0.12); border-color: rgba(20,187,191,0.35); }
+.block-icon.icon-sage  { background: rgba(46,184,126,0.10); border-color: rgba(46,184,126,0.30); }
+.block-icon.icon-amber { background: rgba(232,168,58,0.10); border-color: rgba(232,168,58,0.30); }
+.block-icon.icon-steel { background: rgba(138,180,204,0.10); border-color: rgba(138,180,204,0.30); }
+.block-icon.icon-green { background: rgba(46,184,126,0.10); border-color: rgba(46,184,126,0.30); }
+.block-text-group { flex: 1; min-width: 0; }
+.block-title {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--text);
+  line-height: 1.3;
+  display: flex; align-items: center; flex-wrap: wrap;
+}
+.block-subtitle-desc {
+  font-size: 12px;
+  color: rgba(255,255,255,0.55);
+  margin-top: 2px;
+  line-height: 1.4;
+}
+.block-text {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 22px 26px;
+  font-size: 13px; color: #bee5e4;
+  line-height: 1.8;
+}
+.block-text p + p { margin-top: 14px; }
+.block-text strong { color: inherit; font-weight: 700; }
+.block-text em { color: inherit; font-style: normal; }
+/* Neutralizar todos os <em> dentro do conteúdo da .main — herdam cor e ficam em estilo normal */
+.main em { color: inherit; font-style: normal; }
+.block-text ul { list-style: none; padding: 0; margin: 8px 0; }
+.block-text ul li { position: relative; padding-left: 18px; margin-bottom: 6px; }
+.block-text ul li::before { content: ''; position: absolute; left: 0; top: 11px; width: 5px; height: 5px; border-radius: 50%; background: var(--teal-b); }
+.block-text ol { padding-left: 22px; margin: 8px 0; }
+.block-text ol li { margin-bottom: 6px; }
+.block-text a { color: var(--teal-c); text-decoration: none; border-bottom: 1px dotted rgba(20,187,191,0.4); }
+.block-text a:hover { border-bottom-color: var(--teal-c); }
+
+/* Placeholder appearance (only when empty) */
+.block-text.is-placeholder {
+  background: var(--surface3);
+  border: 1px dashed rgba(12,118,121,0.22);
+  font-style: italic;
+  color: var(--text);
+  min-height: 64px;
+}
+
+/* ── CHARACTER CARD ── */
+.char-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 20px 24px;
+  margin-bottom: 12px;
+  display: flex;
+  gap: 16px;
+  align-items: flex-start;
+}
+.char-icon {
+  width: 44px; height: 44px;
+  border-radius: 10px;
+  background: rgba(12,118,121,0.2);
+  border: 1px solid rgba(12,118,121,0.35);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 22px;
+  flex-shrink: 0;
+}
+.char-body { flex: 1; }
+.char-kicker {
+  font-size: 10px; font-weight: 700;
+  text-transform: uppercase; letter-spacing: 1.5px;
+  color: var(--teal-b);
+  margin-bottom: 4px;
+}
+.char-name {
+  font-size: 15px; font-weight: 700;
+  color: var(--text);
+  margin-bottom: 6px;
+}
+.char-desc {
+  font-size: 13px; color: #bee5e4;
+  line-height: 1.7;
+}
+
+/* ── SUB-CARD with left border (acts, cutscenes, level outcomes) ── */
+.sub-card {
+  background: rgba(36,51,68,0.4);
+  border-left: 3px solid var(--teal-b);
+  border-radius: 6px;
+  padding: 14px 18px;
+  margin-bottom: 10px;
+}
+.sub-card-title {
+  font-size: 11px; font-weight: 700;
+  text-transform: uppercase; letter-spacing: 1.2px;
+  color: var(--teal-c);
+  margin-bottom: 6px;
+}
+.sub-card-body {
+  font-size: 13px; color: #bee5e4;
+  line-height: 1.7;
+}
+.sub-card-body ul { list-style: none; padding: 0; margin: 4px 0 0; }
+.sub-card-body ul li { position: relative; padding-left: 16px; margin-bottom: 4px; }
+.sub-card-body ul li::before { content: ''; position: absolute; left: 0; top: 10px; width: 5px; height: 5px; border-radius: 50%; background: var(--teal-b); }
+
+.sub-card.tone-amber { border-left-color: #e8a83a; }
+.sub-card.tone-amber .sub-card-title { color: #e8a83a; }
+.sub-card.tone-steel { border-left-color: #8ab4cc; }
+.sub-card.tone-steel .sub-card-title { color: #8ab4cc; }
+.sub-card.tone-green { border-left-color: var(--green); }
+.sub-card.tone-green .sub-card-title { color: var(--green); }
+
+/* ── SCENE BOX (numbered) ── */
+.scene-box {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 18px 22px 18px 60px;
+  margin-bottom: 10px;
+  position: relative;
+}
+.scene-num {
+  position: absolute;
+  left: 18px; top: 18px;
+  width: 28px; height: 28px;
+  border-radius: 50%;
+  background: var(--teal);
+  color: white;
+  font-size: 12px; font-weight: 700;
+  display: flex; align-items: center; justify-content: center;
+}
+.scene-title {
+  font-size: 14px; font-weight: 700;
+  color: var(--text);
+  margin-bottom: 6px;
+}
+.scene-desc {
+  font-size: 13px; color: #bee5e4;
+  line-height: 1.7;
+  margin-bottom: 8px;
+}
+.scene-event {
+  font-size: 12px; color: rgba(255,255,255,0.55);
+  line-height: 1.6;
+}
+
+/* ── DIALOGUE BOX ── */
+.dialogue {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 14px 18px;
+  margin-bottom: 10px;
+}
+.dialogue-speaker {
+  font-size: 10px; font-weight: 700;
+  text-transform: uppercase; letter-spacing: 1.5px;
+  color: var(--teal-b);
+  margin-bottom: 6px;
+}
+.dialogue-line {
+  font-size: 13px; color: #bee5e4;
+  line-height: 1.7;
+}
+.dialogue.is-thought .dialogue-line { font-style: italic; color: rgba(184,203,216,0.75); }
+
+/* ── CHOICE CALLOUT ── */
+.choice-callout {
+  background: rgba(12,118,121,0.15);
+  border: 1px solid var(--teal);
+  border-radius: var(--radius);
+  padding: 14px 20px;
+  margin: 14px 0;
+  display: flex; align-items: center; gap: 12px;
+  font-size: 13px; font-weight: 600;
+  color: var(--teal-c);
+}
+.choice-callout::before {
+  content: '⚡';
+  font-size: 16px;
+  flex-shrink: 0;
+}
+
+/* ── NUMBERED CHALLENGE LIST (01/02/03 style) ── */
+.challenge-list { display: flex; flex-direction: column; gap: 14px; }
+.challenge-item {
+  display: flex; gap: 18px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 18px 22px;
+  align-items: flex-start;
+}
+.challenge-num {
+  font-size: 26px; font-weight: 800;
+  color: var(--teal-c);
+  letter-spacing: -0.5px;
+  flex-shrink: 0;
+  min-width: 44px;
+  line-height: 1;
+  padding-top: 2px;
+}
+.challenge-body { flex: 1; }
+.challenge-kicker {
+  font-size: 10px; font-weight: 700;
+  text-transform: uppercase; letter-spacing: 1.2px;
+  color: var(--teal-b);
+  margin-bottom: 4px;
+}
+.challenge-title {
+  font-size: 14px; font-weight: 700;
+  color: var(--text);
+  margin-bottom: 6px;
+}
+.challenge-desc {
+  font-size: 13px; color: #bee5e4;
+  line-height: 1.7;
+  margin-bottom: 6px;
+}
+.challenge-note {
+  font-size: 12px; color: rgba(255,255,255,0.55);
+}
+
+/* ── 3-COLUMN LEVEL CARDS ── */
+.level-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 14px; margin-bottom: 20px; }
+@media (max-width:640px) { .level-grid { grid-template-columns: 1fr; } }
+.level-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 20px;
+}
+.level-card.tone-1 { background: linear-gradient(180deg, rgba(232,168,58,0.10) 0%, var(--surface) 60%); border-color: rgba(232,168,58,0.3); }
+.level-card.tone-2 { background: linear-gradient(180deg, rgba(138,180,204,0.10) 0%, var(--surface) 60%); border-color: rgba(138,180,204,0.3); }
+.level-card.tone-3 { background: linear-gradient(180deg, rgba(46,184,126,0.10) 0%, var(--surface) 60%); border-color: rgba(46,184,126,0.3); }
+.level-cap {
+  font-size: 10px; font-weight: 700;
+  text-transform: uppercase; letter-spacing: 1.5px;
+  margin-bottom: 6px;
+}
+.level-card.tone-1 .level-cap { color: #e8a83a; }
+.level-card.tone-2 .level-cap { color: #8ab4cc; }
+.level-card.tone-3 .level-cap { color: var(--green); }
+.level-name { font-size: 18px; font-weight: 700; color: var(--text); margin-bottom: 12px; }
+.level-pts { font-size: 28px; font-weight: 300; color: rgba(255,255,255,0.8); line-height: 1; }
+.level-pts-label { font-size: 11px; color: rgba(255,255,255,0.55); margin-top: 4px; margin-bottom: 14px; }
+.level-token {
+  display: inline-block;
+  padding: 5px 14px;
+  border-radius: 20px;
+  font-size: 10px; font-weight: 700;
+  letter-spacing: 0.5px;
+}
+
+/* ── LABEL-VALUE TABLE (left label, right content) ── */
+.lv-table {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 8px 22px;
+}
+.lv-row {
+  display: grid;
+  grid-template-columns: 180px 1fr;
+  gap: 20px;
+  padding: 14px 0;
+  border-top: 1px solid var(--border2);
+  align-items: start;
+}
+.lv-row:first-child { border-top: none; }
+.lv-label {
+  font-size: 10px; font-weight: 700;
+  text-transform: uppercase; letter-spacing: 1.2px;
+  color: var(--teal-b);
+  padding-top: 2px;
+}
+.lv-value {
+  font-size: 13px; color: #bee5e4;
+  line-height: 1.7;
+}
+@media (max-width:640px) {
+  .lv-row { grid-template-columns: 1fr; gap: 4px; }
+}
+
+/* ── REFERENCE LINK ── */
+.ref-link {
+  display: inline-flex; align-items: center; gap: 6px;
+  font-size: 12px; color: var(--teal-c);
+  text-decoration: none;
+  margin-right: 16px;
+  margin-top: 6px;
+}
+.ref-link::before { content: '↗'; font-size: 14px; }
+.ref-link:hover { color: var(--text); }
+.ref-list { margin-top: 14px; display: flex; flex-wrap: wrap; }
+
+/* ── DATA TABLE – reaproveita choice-table para outras seções ── */
+.data-table-wrap {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 20px 22px;
+  margin-bottom: 14px;
+}
+.data-table-wrap .choice-table { margin: 0; }
+
+/* ── INTERFACE BOX (textos de interface in-game) ── */
+.iface-box {
+  background: rgba(12,118,121,0.10);
+  border: 1px solid rgba(12,118,121,0.30);
+  border-radius: 6px;
+  padding: 10px 14px;
+  margin: 8px 0;
+  font-size: 12px;
+  color: #d4e3ec;
+  line-height: 1.6;
+  font-family: 'SF Mono', Consolas, 'Roboto Mono', monospace;
+}
+.iface-box .iface-tag {
+  display: inline-block;
+  background: rgba(12,118,121,0.4);
+  color: var(--teal-c);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  padding: 2px 8px;
+  border-radius: 3px;
+  margin-right: 8px;
+  vertical-align: middle;
+  text-transform: uppercase;
+  font-family: inherit;
+}
+.iface-box p + p { margin-top: 6px; }
+.iface-box ul { list-style: none; padding: 0; margin: 6px 0; }
+.iface-box ul li { padding: 3px 0; }
+
+/* ── MAP BOX (mapas e painéis visuais) ── */
+.map-box {
+  background: rgba(36,51,68,0.5);
+  border: 1px dashed rgba(20,187,191,0.45);
+  border-radius: 8px;
+  padding: 14px 18px;
+  margin: 10px 0;
+}
+.map-box-title {
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  color: var(--teal-c);
+  margin-bottom: 8px;
+}
+.map-box-flow {
+  font-size: 13px;
+  color: var(--text);
+  font-weight: 500;
+  margin-bottom: 8px;
+  line-height: 1.7;
+}
+.map-box-flow .arrow {
+  color: var(--teal-b);
+  margin: 0 8px;
+  font-weight: 700;
+}
+.map-box-caption {
+  font-size: 12px;
+  color: #bee5e4;
+  line-height: 1.6;
+}
+
+/* ── QUIZ QUESTION ── */
+.quiz-question {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 20px 24px;
+  margin-bottom: 14px;
+}
+.quiz-question-header {
+  display: flex;
+  align-items: baseline;
+  gap: 14px;
+  margin-bottom: 12px;
+}
+.quiz-num {
+  font-size: 22px;
+  font-weight: 800;
+  color: var(--teal-c);
+  letter-spacing: -0.5px;
+  line-height: 1;
+  flex-shrink: 0;
+  min-width: 48px;
+}
+.quiz-num-label {
+  font-size: 9px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: rgba(255,255,255,0.5);
+  display: block;
+  margin-bottom: 2px;
+}
+.quiz-stem {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text);
+  line-height: 1.5;
+  flex: 1;
+}
+.quiz-options { margin: 12px 0; }
+.quiz-option {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 10px 14px;
+  margin-bottom: 6px;
+  border-radius: 6px;
+  font-size: 13px;
+  color: #bee5e4;
+  line-height: 1.5;
+  background: rgba(36,51,68,0.35);
+  border: 1px solid var(--border2);
+}
+.quiz-option .opt-letter {
+  font-weight: 700;
+  color: var(--teal-c);
+  flex-shrink: 0;
+  min-width: 22px;
+}
+.quiz-option.is-correct {
+  background: rgba(46,184,126,0.10);
+  border-color: rgba(46,184,126,0.45);
+  color: var(--text);
+}
+.quiz-option.is-correct .opt-letter { color: var(--green); }
+.quiz-option.is-correct .opt-text::after {
+  content: ' ✓';
+  color: var(--green);
+  font-weight: 700;
+  margin-left: 4px;
+}
+.quiz-feedback { margin-top: 10px; }
+.quiz-fb-row {
+  display: flex;
+  gap: 10px;
+  font-size: 12px;
+  color: #bee5e4;
+  line-height: 1.6;
+  padding: 8px 12px;
+  margin-bottom: 4px;
+  background: rgba(36,51,68,0.4);
+  border-left: 3px solid var(--teal-dim);
+  border-radius: 0 4px 4px 0;
+}
+.quiz-fb-label {
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: var(--teal-c);
+  flex-shrink: 0;
+  min-width: 90px;
+}
+.quiz-fb-row.is-correct { border-left-color: var(--green); }
+.quiz-fb-row.is-correct .quiz-fb-label { color: var(--green); }
+.quiz-fb-row.is-error { border-left-color: #e35e5e; }
+.quiz-fb-row.is-error .quiz-fb-label { color: #e35e5e; }
+.quiz-fb-row.is-hint { border-left-color: #e8a83a; }
+.quiz-fb-row.is-hint .quiz-fb-label { color: #e8a83a; }
+
+/* ── PROD-NOTE (notas de produção) ── */
+.prod-note {
+  background: rgba(232,168,58,0.08);
+  border-left: 3px solid rgba(232,168,58,0.5);
+  border-radius: 0 6px 6px 0;
+  padding: 12px 16px;
+  margin: 12px 0;
+  font-size: 12px;
+  color: #bee5e4;
+  line-height: 1.7;
+}
+.prod-note-title {
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  color: #e8a83a;
+  margin-bottom: 4px;
+}
+
+/* ── CUTSCENE BOX ── */
+.cutscene-box {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 20px 24px;
+  margin-bottom: 14px;
+  border-top: 3px solid var(--teal);
+}
+.cutscene-num {
+  display: inline-block;
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  color: var(--teal-c);
+  background: var(--teal-dim);
+  padding: 3px 10px;
+  border-radius: 12px;
+  margin-bottom: 8px;
+}
+.cutscene-title {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--text);
+  margin-bottom: 6px;
+}
+.cutscene-meta {
+  font-size: 11px;
+  color: rgba(255,255,255,0.55);
+  margin-bottom: 12px;
+  letter-spacing: 0.5px;
+}
+.cutscene-row {
+  font-size: 13px;
+  color: #bee5e4;
+  line-height: 1.7;
+  margin-bottom: 8px;
+}
+.cutscene-row strong {
+  display: inline-block;
+  color: var(--teal-c);
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-right: 6px;
+  font-weight: 700;
+}
+
+/* ── DUE SCORE TABLE (4c) – colored stage headers ── */
+.score-table-section {
+  font-size: 10px; font-weight: 700;
+  text-transform: uppercase; letter-spacing: 1.5px;
+  color: var(--teal-c);
+  padding: 14px 12px 8px;
+  background: rgba(12,118,121,0.18);
+  border-bottom: 1px solid rgba(12,118,121,0.4);
+}
+.score-table-section.tone-amber { color: #e8a83a; background: rgba(232,168,58,0.10); border-bottom-color: rgba(232,168,58,0.35); }
+.score-table-section.tone-steel { color: #8ab4cc; background: rgba(138,180,204,0.10); border-bottom-color: rgba(138,180,204,0.35); }
+.score-table-section.tone-green { color: var(--green); background: rgba(46,184,126,0.10); border-bottom-color: rgba(46,184,126,0.35); }
+
+/* ── FLOW CURVE (4d) – 3 columns of risk profile ── */
+.flow-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 14px; margin: 16px 0; }
+@media (max-width:640px) { .flow-grid { grid-template-columns: 1fr; } }
+.flow-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 18px 20px;
+}
+.flow-card.tone-1 { border-top: 3px solid #e8a83a; }
+.flow-card.tone-2 { border-top: 3px solid #8ab4cc; }
+.flow-card.tone-3 { border-top: 3px solid var(--green); }
+.flow-card-kicker {
+  font-size: 10px; font-weight: 700;
+  text-transform: uppercase; letter-spacing: 1.5px;
+  margin-bottom: 4px;
+}
+.flow-card.tone-1 .flow-card-kicker { color: #e8a83a; }
+.flow-card.tone-2 .flow-card-kicker { color: #8ab4cc; }
+.flow-card.tone-3 .flow-card-kicker { color: var(--green); }
+.flow-card-title {
+  font-size: 14px; font-weight: 700;
+  color: var(--text);
+  margin-bottom: 12px;
+}
+.flow-card-row {
+  font-size: 12px;
+  margin-bottom: 8px;
+  color: #bee5e4;
+  line-height: 1.6;
+}
+.flow-card-row strong {
+  display: block;
+  color: var(--teal-c);
+  font-size: 10px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  margin-bottom: 2px;
+}
+.flow-card-row.is-low strong { color: var(--green); }
+.flow-card-row.is-mid strong { color: #e8a83a; }
+.flow-card-row.is-high strong { color: #e35e5e; }
+
+/* ── ACT HEADER (Ato 1 / 2 / 3 em 2d) ── */
+.act-header {
+  margin: 28px 0 14px;
+  padding: 12px 18px;
+  background: linear-gradient(90deg, rgba(12,118,121,0.25), rgba(12,118,121,0.05));
+  border-left: 4px solid var(--teal);
+  border-radius: 6px;
+}
+.act-header:first-child { margin-top: 6px; }
+.act-header.tone-amber { background: linear-gradient(90deg, rgba(232,168,58,0.20), rgba(232,168,58,0.04)); border-left-color: #e8a83a; }
+.act-header.tone-steel { background: linear-gradient(90deg, rgba(138,180,204,0.20), rgba(138,180,204,0.04)); border-left-color: #8ab4cc; }
+.act-header.tone-green { background: linear-gradient(90deg, rgba(46,184,126,0.20), rgba(46,184,126,0.04)); border-left-color: var(--green); }
+.act-kicker {
+  font-size: 10px; font-weight: 700;
+  text-transform: uppercase; letter-spacing: 1.5px;
+  color: var(--teal-c);
+  margin-bottom: 4px;
+}
+.act-header.tone-amber .act-kicker { color: #e8a83a; }
+.act-header.tone-steel .act-kicker { color: #8ab4cc; }
+.act-header.tone-green .act-kicker { color: var(--green); }
+.act-title {
+  font-size: 16px; font-weight: 700;
+  color: var(--text);
+}
+
+/* Extend scene-box for richer content */
+.scene-desc p { margin-bottom: 8px; }
+.scene-desc p:last-child { margin-bottom: 0; }
+.scene-desc ul { list-style: none; padding: 0; margin: 8px 0; }
+.scene-desc ul li { position: relative; padding-left: 16px; margin-bottom: 6px; }
+.scene-desc ul li::before { content: ''; position: absolute; left: 0; top: 10px; width: 5px; height: 5px; border-radius: 50%; background: var(--teal-b); }
+.scene-desc strong { color: inherit; font-weight: 700; }
+
+/* ── CHOICE TABLE (3 columns: option / pedagogical / narrative impact) ── */
+.choice-block {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 20px 22px;
+  margin-bottom: 14px;
+}
+.choice-block-header {
+  display: flex; align-items: center; gap: 10px;
+  margin-bottom: 6px;
+}
+.choice-block-icon {
+  font-size: 14px;
+  color: var(--teal-c);
+}
+.choice-block-title {
+  font-size: 14px; font-weight: 700;
+  color: var(--text);
+}
+.choice-block-intro {
+  font-size: 13px; color: #bee5e4;
+  line-height: 1.7;
+  margin-bottom: 14px;
+}
+.choice-table {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: fixed;
+  font-size: 12px;
+}
+/* Larguras iguais por padrão para todas as colunas */
+.choice-table colgroup col { width: auto; }
+/* Tabela 2 colunas: 30/70 */
+.choice-table colgroup:has(col:nth-child(2):last-child) col:nth-child(1) { width: 32%; }
+.choice-table colgroup:has(col:nth-child(2):last-child) col:nth-child(2) { width: 68%; }
+/* Tabela 3 colunas: 33/33/34 (iguais) */
+.choice-table colgroup:has(col:nth-child(3):last-child) col { width: 33.33%; }
+/* Tabela 4 colunas: 26/26/16/32 */
+.choice-table colgroup:has(col:nth-child(4):last-child) col:nth-child(1) { width: 26%; }
+.choice-table colgroup:has(col:nth-child(4):last-child) col:nth-child(2) { width: 26%; }
+.choice-table colgroup:has(col:nth-child(4):last-child) col:nth-child(3) { width: 16%; }
+.choice-table colgroup:has(col:nth-child(4):last-child) col:nth-child(4) { width: 32%; }
+.choice-table thead th {
+  font-size: 10px; font-weight: 700;
+  text-transform: uppercase; letter-spacing: 1px;
+  color: var(--teal-c);
+  text-align: left;
+  padding: 8px 12px;
+  border-bottom: 1px solid rgba(12,118,121,0.4);
+  background: rgba(12,118,121,0.12);
+  vertical-align: bottom;
+}
+.choice-table thead th:first-child { border-top-left-radius: 6px; }
+.choice-table thead th:last-child { border-top-right-radius: 6px; }
+.choice-table tbody td {
+  padding: 10px 12px;
+  border-bottom: 1px solid var(--border2);
+  color: #bee5e4;
+  line-height: 1.6;
+  vertical-align: top;
+}
+.choice-table tbody tr:last-child td { border-bottom: none; }
+.choice-consequence {
+  margin-top: 12px;
+  font-size: 12px; color: rgba(255,255,255,0.65);
+  line-height: 1.6;
+  padding-left: 12px;
+  border-left: 2px solid var(--teal-dim);
+}
+
+/* ── CHARACTER PENDING MARKER (nomes de personagens em desenvolvimento) ── */
+.char-pending {
+  position: relative;
+  cursor: help;
+}
+.char-pending::after {
+  content: '*';
+  color: var(--teal-c);
+  font-weight: 700;
+  font-size: 0.75em;
+  vertical-align: super;
+  margin-left: 1px;
+  margin-right: 1px;
+}
+.char-pending:hover::before {
+  content: 'Nome provisório — em desenvolvimento por profissional externo';
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #1a2a32;
+  border: 1px solid var(--teal);
+  border-radius: 6px;
+  padding: 6px 10px;
+  font-size: 11px;
+  font-weight: 400;
+  color: var(--text);
+  white-space: nowrap;
+  margin-bottom: 6px;
+  z-index: 100;
+  font-style: normal;
+  text-transform: none;
+  letter-spacing: 0;
+  pointer-events: none;
+}
+
+/* ── TOOLTIP SYSTEM ── */
+.tip-trigger {
+  display: inline-flex;
+  align-items: center; justify-content: center;
+  width: 16px; height: 16px;
+  border-radius: 50%;
+  background: var(--teal-dim);
+  border: 1px solid var(--teal);
+  color: var(--teal-c);
+  font-size: 10px; font-weight: 700;
+  margin-left: 8px;
+  cursor: help;
+  position: relative;
+  vertical-align: middle;
+  flex-shrink: 0;
+  user-select: none;
+  transition: all 0.15s;
+}
+.tip-trigger:hover, .tip-trigger.is-open {
+  background: var(--teal);
+  color: white;
+}
+.tip-trigger .tip-content {
+  display: none;
+  position: absolute;
+  top: calc(100% + 10px);
+  left: 50%;
+  transform: translateX(-50%);
+  width: 320px;
+  max-width: calc(100vw - 40px);
+  background: var(--bg3);
+  border: 1px solid var(--teal);
+  border-radius: var(--radius);
+  padding: 14px 16px;
+  font-size: 12px; font-weight: 400;
+  color: #d4e3ec;
+  line-height: 1.6;
+  text-align: left;
+  text-transform: none;
+  letter-spacing: normal;
+  z-index: 100;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+  cursor: default;
+}
+.tip-trigger .tip-content::before {
+  content: '';
+  position: absolute;
+  top: -6px; left: 50%;
+  transform: translateX(-50%) rotate(45deg);
+  width: 10px; height: 10px;
+  background: var(--bg3);
+  border-top: 1px solid var(--teal);
+  border-left: 1px solid var(--teal);
+}
+.tip-trigger:hover .tip-content,
+.tip-trigger.is-open .tip-content { display: block; }
+.tip-trigger.tip-right .tip-content { left: 0; transform: none; }
+.tip-trigger.tip-right .tip-content::before { left: 6px; transform: rotate(45deg); }
+
+/* Make subtitles flex so tooltip aligns */
+.block-subtitle, .info-card-title, .page-title { display: flex; align-items: center; flex-wrap: wrap; }
+.page-title .tip-trigger { width: 22px; height: 22px; font-size: 12px; margin-left: 14px; }
+.page-cap .tip-trigger, .hero-cap .tip-trigger { width: 14px; height: 14px; font-size: 9px; margin-left: 8px; }
+.page-cap .tip-trigger .tip-content,
+.hero-cap .tip-trigger .tip-content { letter-spacing: normal; }
+
+/* ── PRINT (PDF export) ── */
+@media print {
+  body { background: var(--bg); display: block; font-size: 11px; }
+  .sidebar, .topbar, .menu-toggle, .sidebar-overlay { display: none !important; }
+  .content { margin-left: 0; }
+  .main { padding: 0; max-width: none; }
+  .section { display: block !important; page-break-after: always; }
+  .section:last-child { page-break-after: auto; }
+  .tip-trigger { display: none !important; }
+  .info-card, .block-text, .char-card, .sub-card, .scene-box, .dialogue, .challenge-item, .level-card, .lv-table {
+    page-break-inside: avoid;
+    break-inside: avoid;
+  }
+  .hero { page-break-after: avoid; }
+}
+
+/* ── HERO ── */
+.hero {
+  background: linear-gradient(135deg, var(--bg2) 0%, var(--teal) 100%);
+  border-radius: var(--radius-lg);
+  padding: 48px 52px;
+  margin-bottom: 36px;
+  position: relative; overflow: hidden;
+}
+.hero::before { content:''; position:absolute; top:-70px; right:-70px; width:260px; height:260px; background:rgba(255,255,255,0.04); border-radius:50%; }
+.hero::after  { content:''; position:absolute; bottom:-40px; right:60px; width:160px; height:160px; background:rgba(255,255,255,0.03); border-radius:50%; }
+.hero-cap { font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:2.5px; color:rgba(255,255,255,0.55); margin-bottom:14px; }
+.hero-title { font-size:42px; font-weight:800; line-height:1.05; letter-spacing:-1px; color:white; margin-bottom:10px; }
+.hero-subtitle { font-size:17px; font-weight:300; color:rgba(255,255,255,0.75); margin-bottom:28px; }
+.hero-meta { display:flex; gap:20px; flex-wrap:wrap; }
+.hero-meta-item { display:flex; align-items:center; gap:7px; font-size:13px; font-weight:500; color:rgba(255,255,255,0.85); }
+.hero-meta-item::before { content:''; width:7px; height:7px; border-radius:50%; background:var(--teal-c); flex-shrink:0; }
+
+/* ── INFO CARD ── */
+.info-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 28px 32px;
+  margin-bottom: 20px;
+}
+.info-card-header { display:flex; align-items:center; gap:14px; margin-bottom:18px; padding-bottom:16px; border-bottom:1px solid var(--border2); }
+.info-card-icon { width:44px; height:44px; border-radius:10px; display:flex; align-items:center; justify-content:center; font-size:20px; flex-shrink:0; }
+.icon-teal   { background:rgba(12,118,121,0.2);  border:1px solid rgba(12,118,121,0.35); }
+.icon-amber  { background:rgba(212,136,58,0.15); border:1px solid rgba(212,136,58,0.3); }
+.icon-sage   { background:rgba(74,143,122,0.15); border:1px solid rgba(74,143,122,0.3); }
+.icon-steel  { background:rgba(90,138,170,0.15); border:1px solid rgba(90,138,170,0.3); }
+.icon-green  { background:rgba(46,184,126,0.12); border:1px solid rgba(46,184,126,0.3); }
+.info-card-title    { font-size:15px; font-weight:700; color:var(--text); margin-bottom:3px; }
+.info-card-subtitle { font-size:11px; color:rgba(255,255,255,0.65); font-weight:400; }
+.info-card-body { font-size:13px; color:#bee5e4; line-height:1.8; }
+.info-card-body p + p { margin-top:14px; }
+
+/* ── SCORE TABLE ── */
+.score-table { width:100%; border-collapse:collapse; margin:16px 0 20px; }
+.score-table th { font-size:9px; font-weight:700; text-transform:uppercase; letter-spacing:1.5px; color:rgba(255,255,255,0.5); padding:0 0 10px; text-align:left; }
+.score-table td { font-size:13px; color:var(--text); padding:12px 0; border-top:1px solid var(--border2); vertical-align:middle; }
+.score-table tr:last-child td { border-top:1px solid rgba(255,255,255,0.12); font-weight:700; padding-top:14px; }
+.stage-label { font-weight:700; }
+.stage-1 { color:#e8a83a; }
+.stage-2 { color:#8ab4cc; }
+.stage-3 { color:#2eb87e; }
+.token-pill { display:inline-block; padding:4px 12px; border-radius:20px; font-size:10px; font-weight:700; letter-spacing:0.5px; }
+.pill-bronze { background:rgba(205,127,50,0.18); border:1px solid rgba(205,127,50,0.4); color:#e8a83a; }
+.pill-silver { background:rgba(138,180,204,0.15); border:1px solid rgba(138,180,204,0.35); color:#8ab4cc; }
+.pill-gold   { background:rgba(46,184,126,0.12);  border:1px solid rgba(46,184,126,0.35); color:#2eb87e; }
+.score-note { font-size:13px; color:#bee5e4; line-height:1.8; margin-top:4px; }
+
+/* ── TWO-COL GRID ── */
+.two-col { display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-bottom:20px; }
+@media (max-width:640px) { .two-col { grid-template-columns:1fr; } }
+
+/* ── SCROLLBAR ── */
+::-webkit-scrollbar { width: 4px; }
+::-webkit-scrollbar-track { background: var(--bg2); }
+::-webkit-scrollbar-thumb { background: var(--teal); border-radius: 2px; }
+</style>
+</head>
+<body>
+
+<aside class="sidebar">
+  <div class="sidebar-header">
+    <div class="logo">
+      <div class="logo-mark"><img src="data:image/jpeg;base64,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" alt="Fabulus"></div>
+      <div class="logo-name"><img src="data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiPz4KPHN2ZyBpZD0iTGF5ZXJfMSIgZGF0YS1uYW1lPSJMYXllciAxIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZlcnNpb249IjEuMSIgdmlld0JveD0iMCAwIDQ1MyAxNTMiPgogIDxkZWZzPgogICAgPHN0eWxlPgogICAgICAuY2xzLTEgewogICAgICAgIGZpbGw6ICNmZmY7CiAgICAgICAgZm9udC1mYW1pbHk6IENoaWNsZS1SZWd1bGFyLCBDaGljbGU7CiAgICAgICAgZm9udC1zaXplOiAxNDEuN3B4OwogICAgICB9CiAgICA8L3N0eWxlPgogIDwvZGVmcz4KICA8dGV4dCBjbGFzcz0iY2xzLTEiIHRyYW5zZm9ybT0idHJhbnNsYXRlKDIwLjEgMTIzKSI+PHRzcGFuIHg9IjAiIHk9IjAiPkZBQlVMVVM8L3RzcGFuPjwvdGV4dD4KPC9zdmc+" alt="FABULUS"></div>
+    </div>
+    <div style="font-size:9px;font-weight:600;color:var(--teal-b);letter-spacing:0.4px;margin-bottom:10px;line-height:1.4;">Fluxo Governado de Geração de<br>Game Design Documents</div>
+    <div class="doc-badge">Game Design Document</div>
+    <div class="doc-title" id="sidebarTitle">Título do Game Design Document</div>
+  </div>
+
+  <nav class="nav">
+
+    <div class="nav-group">
+      <div class="nav-section-title active" id="nav-premissas" onclick="showSection('premissas')">Premissas</div>
+      <div class="nav-sub" onclick="goToSubitem('premissas', 'sub-p-quem')" data-target="sub-p-quem">Informações Iniciais</div>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-section-title" id="nav-s1" onclick="showSection('s1')">Seção 1 – Visão Geral</div>
+      <div class="nav-sub" onclick="goToSubitem('s1', 'sub-s1-titulo')" data-target="sub-s1-titulo">Título</div>
+      <div class="nav-sub" onclick="goToSubitem('s1', 'sub-s1-conceito')" data-target="sub-s1-conceito">Conceito central</div>
+      <div class="nav-sub" onclick="goToSubitem('s1', 'sub-s1-genero')" data-target="sub-s1-genero">Gênero narrativo</div>
+      <div class="nav-sub" onclick="goToSubitem('s1', 'sub-s1-publico')" data-target="sub-s1-publico">Público-alvo</div>
+      <div class="nav-sub" onclick="goToSubitem('s1', 'sub-s1-objetivos')" data-target="sub-s1-objetivos">Objetivos do jogo</div>
+      <div class="nav-sub" onclick="goToSubitem('s1', 'sub-s1-plataforma')" data-target="sub-s1-plataforma">Plataforma e formato</div>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-section-title" id="nav-s2" onclick="showSection('s2')">Seção 2 – Narrativa</div>
+      <div class="nav-sub" onclick="goToSubitem('s2', 'sub-s2a')" data-target="sub-s2a">Premissa e cenário</div>
+      <div class="nav-sub" onclick="goToSubitem('s2', 'sub-s2b')" data-target="sub-s2b">Plot geral</div>
+      <div class="nav-sub" onclick="goToSubitem('s2', 'sub-s2c')" data-target="sub-s2c">Personagens principais</div>
+      <div class="nav-sub" onclick="goToSubitem('s2', 'sub-s2d')" data-target="sub-s2d">Estrutura de cenas</div>
+      <div class="nav-sub" onclick="goToSubitem('s2', 'sub-s2e')" data-target="sub-s2e">Caminhos ramificados</div>
+      <div class="nav-sub" onclick="goToSubitem('s2', 'sub-s2f')" data-target="sub-s2f">Lore e worldbuilding</div>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-section-title" id="nav-s3" onclick="showSection('s3')">Seção 3 – Objetivos Pedagógicos</div>
+      <div class="nav-sub" onclick="goToSubitem('s3', 'sub-s3a')" data-target="sub-s3a">Conhecimento prévio requerido</div>
+      <div class="nav-sub" onclick="goToSubitem('s3', 'sub-s3b')" data-target="sub-s3b">Conhecimento a ser adquirido</div>
+      <div class="nav-sub" onclick="goToSubitem('s3', 'sub-s3c')" data-target="sub-s3c">Conhecimento potencial</div>
+      <div class="nav-sub" onclick="goToSubitem('s3', 'sub-s3d')" data-target="sub-s3d">Resultados de aprendizagem</div>
+      <div class="nav-sub" onclick="goToSubitem('s3', 'sub-s3e')" data-target="sub-s3e">Princípios instrucionais</div>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-section-title" id="nav-s4" onclick="showSection('s4')">Seção 4 – Mecânicas de Jogo</div>
+      <div class="nav-sub" onclick="goToSubitem('s4', 'sub-s4a')" data-target="sub-s4a">Regras fundamentais</div>
+      <div class="nav-sub" onclick="goToSubitem('s4', 'sub-s4b')" data-target="sub-s4b">Controladores e ações</div>
+      <div class="nav-sub" onclick="goToSubitem('s4', 'sub-s4c')" data-target="sub-s4c">Sistema de progressão</div>
+      <div class="nav-sub" onclick="goToSubitem('s4', 'sub-s4d')" data-target="sub-s4d">Curva de Flow</div>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-section-title" id="nav-s5" onclick="showSection('s5')">Seção 5 – Desafios e Objetivos</div>
+      <div class="nav-sub" onclick="goToSubitem('s5', 'sub-s5a')" data-target="sub-s5a">Lista de desafios</div>
+      <div class="nav-sub" onclick="goToSubitem('s5', 'sub-s5b')" data-target="sub-s5b">Metas do jogador</div>
+      <div class="nav-sub" onclick="goToSubitem('s5', 'sub-s5c')" data-target="sub-s5c">Relação com narrativa</div>
+      <div class="nav-sub" onclick="goToSubitem('s5', 'sub-s5d')" data-target="sub-s5d">Vinculação pedagógica</div>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-section-title" id="nav-s6" onclick="showSection('s6')">Seção 6 – Níveis</div>
+      <div class="nav-sub" onclick="goToSubitem('s6', 'sub-s6a')" data-target="sub-s6a">Estrutura e sequência</div>
+      <div class="nav-sub" onclick="goToSubitem('s6', 'sub-s6b')" data-target="sub-s6b">Conhecimento por nível</div>
+      <div class="nav-sub" onclick="goToSubitem('s6', 'sub-s6c')" data-target="sub-s6c">Ordem pedagógica</div>
+      <div class="nav-sub" onclick="goToSubitem('s6', 'sub-s6d')" data-target="sub-s6d">Metas e desafios por nível</div>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-section-title" id="nav-s7" onclick="showSection('s7')">Seção 7 – Elementos de Engajamento</div>
+      <div class="nav-sub" onclick="goToSubitem('s7', 'sub-s7a')" data-target="sub-s7a">Fantasy</div>
+      <div class="nav-sub" onclick="goToSubitem('s7', 'sub-s7b')" data-target="sub-s7b">Mystery / Curiosidade</div>
+      <div class="nav-sub" onclick="goToSubitem('s7', 'sub-s7c')" data-target="sub-s7c">Estímulos sensoriais</div>
+      <div class="nav-sub" onclick="goToSubitem('s7', 'sub-s7d')" data-target="sub-s7d">Recompensas e punições</div>
+      <div class="nav-sub" onclick="goToSubitem('s7', 'sub-s7e')" data-target="sub-s7e">Feedback ao jogador</div>
+      <div class="nav-sub" onclick="goToSubitem('s7', 'sub-s7f')" data-target="sub-s7f">Motivação intrínseca e extrínseca</div>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-section-title" id="nav-s8" onclick="showSection('s8')">Seção 8 – Conteúdo Audiovisual</div>
+      <div class="nav-sub" onclick="goToSubitem('s8', 'sub-s8a')" data-target="sub-s8a">Diretrizes visuais</div>
+      <div class="nav-sub" onclick="goToSubitem('s8', 'sub-s8b')" data-target="sub-s8b">Diretrizes de áudio</div>
+      <div class="nav-sub" onclick="goToSubitem('s8', 'sub-s8c')" data-target="sub-s8c">Textos in-game e diálogos</div>
+      <div class="nav-sub" onclick="goToSubitem('s8', 'sub-s8d')" data-target="sub-s8d">Cutscenes e cinemáticas</div>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-section-title" id="nav-s9" onclick="showSection('s9')">Seção 9 – Requisitos Técnicos</div>
+      <div class="nav-sub" onclick="goToSubitem('s9', 'sub-s9a')" data-target="sub-s9a">Plataforma de publicação</div>
+      <div class="nav-sub" onclick="goToSubitem('s9', 'sub-s9b')" data-target="sub-s9b">Restrições técnicas</div>
+      <div class="nav-sub" onclick="goToSubitem('s9', 'sub-s9c')" data-target="sub-s9c">Requisitos do dispositivo</div>
+      <div class="nav-sub" onclick="goToSubitem('s9', 'sub-s9d')" data-target="sub-s9d">Arquitetura de dados</div>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-section-title" id="nav-s10" onclick="showSection('s10')">Seção 10 – Critérios de Qualidade</div>
+      <div class="nav-sub" onclick="goToSubitem('s10', 'sub-s10a')" data-target="sub-s10a">Completude do documento</div>
+      <div class="nav-sub" onclick="goToSubitem('s10', 'sub-s10b')" data-target="sub-s10b">Consistência interna</div>
+      <div class="nav-sub" onclick="goToSubitem('s10', 'sub-s10c')" data-target="sub-s10c">Aderência aos resultados</div>
+      <div class="nav-sub" onclick="goToSubitem('s10', 'sub-s10d')" data-target="sub-s10d">Adequação ao público-alvo</div>
+      <div class="nav-sub" onclick="goToSubitem('s10', 'sub-s10e')" data-target="sub-s10e">Rastreabilidade das decisões</div>
+    </div>
+
+  </nav>
+
+  <div class="sidebar-footer">
+    <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--text);margin-bottom:8px;">Pontuação total</div>
+    <div class="score-mini">
+      <div class="score-token"><div class="score-token-icon">🥉</div><span class="score-token-pts">—</span><div class="score-token-label">Bronze</div></div>
+      <div class="score-token"><div class="score-token-icon">🥈</div><span class="score-token-pts">—</span><div class="score-token-label">Prata</div></div>
+      <div class="score-token"><div class="score-token-icon">🥇</div><span class="score-token-pts">—</span><div class="score-token-label">Ouro</div></div>
+    </div>
+  </div>
+</aside>
+
+<div class="content">
+  <div class="sidebar-overlay" onclick="toggleSidebar(false)"></div>
+  <div class="topbar">
+    <button class="menu-toggle" onclick="toggleSidebar()" aria-label="Abrir menu">☰</button>
+    <div class="topbar-breadcrumb">Fabulus → <span id="breadcrumbSection">Premissas</span></div>
+    <div class="topbar-actions">
+      <span class="chip chip-teal">GDD Completo</span>
+      <span class="chip chip-green">10 Seções</span>
+      <button class="btn-pdf">📄 Gerar PDF final</button>
+    </div>
+  </div>
+
+  <div class="main">
+
+    <!-- PREMISSAS -->
+    <div class="section active" id="section-premissas">
+      <div class="page-cap">Premissas<span class="tip-trigger" tabindex="0" aria-label="Sobre esta seção">?<span class="tip-content">Conjunto de informações iniciais que precedem o GDD: define quem é o jogador, o que será aprendido, a base pesquisada para construir o jogo e os parâmetros estruturais (etapas, pontuação, contexto de uso, identidade).</span></span></div>
+      <div class="page-title" id="p-titulo">Título do Game Design Document</div>
+
+      
+      <div class="info-card">
+        <div class="info-card-header"><div class="info-card-icon icon-teal">👥</div><div><div class="info-card-title" id="sub-p-quem">Quem vai jogar</div><div class="info-card-subtitle">Perfil do público-alvo declarado e interpretado</div></div></div>
+        <div class="info-card-body is-placeholder" id="p-quem">
+          <p>Descrição do público-alvo do jogo, incluindo faixa etária, formação, repertório prévio sobre o tema e contexto de uso. O sistema deve gerar este conteúdo a partir das informações iniciais do projeto.</p>
+        </div>
+      </div>
+
+      <div class="info-card">
+        <div class="info-card-header"><div class="info-card-icon icon-sage">🔬</div><div><div class="info-card-title">O que será pesquisado para construir este jogo</div><div class="info-card-subtitle">Base de conhecimento e fontes consultadas</div></div></div>
+        <div class="info-card-body is-placeholder" id="p-pesquisado">
+          <p>Descrição das fontes e dimensões de pesquisa que sustentarão a construção do GDD — tema, marco legal, contexto de aplicação e referências culturais.</p>
+        </div>
+      </div>
+
+      <div class="info-card">
+        <div class="info-card-header"><div class="info-card-icon icon-teal">📚</div><div><div class="info-card-title">O que o jogador vai aprender</div><div class="info-card-subtitle">Resultado de aprendizagem esperado ao final</div></div></div>
+        <div class="info-card-body is-placeholder" id="p-aprender">
+          <p>Descrição do conjunto de conhecimentos, habilidades e atitudes que o jogador desenvolverá ao concluir o jogo.</p>
+        </div>
+      </div>
+
+      <div class="info-card">
+        <div class="info-card-header"><div class="info-card-icon icon-amber">💡</div><div><div class="info-card-title">Por que este jogo importa</div><div class="info-card-subtitle">Relevância do tema para o público e para o contexto social</div></div></div>
+        <div class="info-card-body is-placeholder" id="p-importa">
+          <p>Descrição da relevância do tema para o público-alvo, para o contexto social e para o momento histórico em que o jogo é publicado.</p>
+        </div>
+      </div>
+
+      <div class="two-col">
+        <div class="info-card" style="margin-bottom:0">
+          <div class="info-card-header"><div class="info-card-icon icon-steel">🗂️</div><div><div class="info-card-title">Estrutura do jogo</div><div class="info-card-subtitle">Organização em etapas e níveis</div></div></div>
+          <div class="info-card-body is-placeholder" id="p-estrutura">
+          <p>Descrição da estrutura do jogo — número de etapas, função pedagógica de cada uma e a relação entre elas.</p>
+        </div>
+        </div>
+        <div class="info-card" style="margin-bottom:0">
+          <div class="info-card-header"><div class="info-card-icon icon-steel">💻</div><div><div class="info-card-title">Requisitos técnicos</div><div class="info-card-subtitle">Plataforma, engine e especificações</div></div></div>
+          <div class="info-card-body is-placeholder" id="p-requisitos">
+          <p>Descrição dos requisitos técnicos do jogo — plataforma de execução, formato, periféricos e integrações obrigatórias.</p>
+        </div>
+        </div>
+      </div>
+
+      <!-- Score table -->
+      <div class="info-card" style="margin-top:20px">
+        <div class="info-card-header"><div class="info-card-icon icon-amber">🏆</div><div><div class="info-card-title">Sistema de pontuação e recompensas</div><div class="info-card-subtitle">Tokens, badges e certificado</div></div></div>
+        <table class="score-table">
+            <thead>
+              <tr><th>Etapa</th><th>Pontuação</th><th>Tokens</th><th>Badge</th></tr>
+            </thead>
+            <tbody>
+              <tr><td colspan="4" class="is-placeholder" style="text-align:center; padding:18px;">Tabela de pontuação a ser preenchida pelo sistema</td></tr>
+            </tbody>
+          </table>
+        <div class="score-note is-placeholder"><p>Notas explicativas sobre a tabela de pontuação serão geradas pelo sistema a partir das premissas estruturais do projeto.</p></div>
+      </div>
+
+      <div class="info-card">
+        <div class="info-card-header"><div class="info-card-icon icon-sage">🏛️</div><div><div class="info-card-title">Contexto de uso</div><div class="info-card-subtitle">Ambiente e condições de aplicação</div></div></div>
+        <div class="info-card-body is-placeholder" id="p-contexto">
+          <p>Descrição do contexto de uso do jogo — onde será aplicado, em que situações, por quanto tempo e com que motivação extrínseca.</p>
+        </div>
+      </div>
+      <div class="info-card">
+        <div class="info-card-header"><div class="info-card-icon icon-amber">🎨</div><div><div class="info-card-title">Tom narrativo e identidade visual</div><div class="info-card-subtitle">Linguagem e estética do projeto</div></div></div>
+        <div class="info-card-body is-placeholder" id="p-tom">
+          <p>Descrição do tom narrativo e da identidade visual do jogo — linguagem adotada, estética, universo cultural e restrições de marca.</p>
+        </div>
+      </div>
+
+      <div class="info-card">
+        <div class="info-card-header"><div class="info-card-icon icon-steel">📎</div><div><div class="info-card-title">Informações adicionais</div><div class="info-card-subtitle">Outros dados relevantes do projeto</div></div></div>
+        <div class="info-card-body is-placeholder" id="p-adicionais">
+          <p>Descrição de informações adicionais relevantes ao projeto — séries anteriores, conexões com outras iniciativas, eventos associados.</p>
+        </div>
+      </div>
+      <div class="info-card">
+        <div class="info-card-header"><div class="info-card-icon icon-green">✅</div><div><div class="info-card-title">Compatibilidade com o projeto</div><div class="info-card-subtitle">Alinhamento com objetivos institucionais</div></div></div>
+        <div class="info-card-body is-placeholder" id="p-compatibilidade">
+          <p>Avaliação da compatibilidade entre as restrições declaradas e os objetivos do projeto.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- SEÇÃO 1 -->
+    <div class="section" id="section-s1">
+
+      <!-- HERO -->
+      <div class="hero" id="sub-s1-titulo">
+        <div class="hero-cap">Seção 1</div>
+        <div class="hero-title">Título do Game Design Document</div>
+        <div class="hero-subtitle">Subtítulo ou descrição curta do jogo</div>
+        <div class="hero-meta">
+          <div class="hero-meta-item"><span>🎯</span>Tipo de jogo</div>
+          <div class="hero-meta-item"><span>👥</span>Público-alvo</div>
+          <div class="hero-meta-item"><span>⏱️</span>Duração estimada</div>
+          <div class="hero-meta-item"><span>🌐</span>Plataforma</div>
+        </div>
+      </div>
+
+      <!-- Conceito central -->
+      <div class="info-card">
+        <div class="info-card-header">
+          <div class="info-card-icon icon-teal">🎮</div>
+          <div><div class="info-card-title" id="sub-s1-conceito">Conceito central<span class="tip-trigger" tabindex="0" aria-label="Sobre esta seção">?<span class="tip-content">Descrição síntese do jogo, integrando narrativa, mecânica e proposta pedagógica em um parágrafo.</span></span></div><div class="info-card-subtitle">A ideia central que define o jogo</div></div>
+        </div>
+        <div class="info-card-body is-placeholder" id="s1-conceito">
+          <p>Síntese do conceito central do jogo, integrando narrativa, mecânica e proposta pedagógica em um parágrafo.</p>
+        </div>
+      </div>
+
+      <!-- Gênero narrativo + Público-alvo (empilhados) -->
+      <div class="info-card">
+        <div class="info-card-header">
+          <div class="info-card-icon icon-sage">🎭</div>
+          <div><div class="info-card-title" id="sub-s1-genero">Gênero narrativo<span class="tip-trigger" tabindex="0" aria-label="Sobre esta seção">?<span class="tip-content">Classificação do jogo dentro do universo dos serious games narrativos, com referência ao tom e ao tipo de experiência que o jogador encontrará.</span></span></div><div class="info-card-subtitle">Categoria e estilo narrativo</div></div>
+        </div>
+        <div class="info-card-body is-placeholder" id="s1-genero">
+          <p>Classificação do jogo dentro do universo dos serious games narrativos, com referência ao tom e ao tipo de experiência.</p>
+        </div>
+      </div>
+      <div class="info-card">
+        <div class="info-card-header">
+          <div class="info-card-icon icon-teal">👥</div>
+          <div><div class="info-card-title" id="sub-s1-publico">Público-alvo<span class="tip-trigger" tabindex="0" aria-label="Sobre esta seção">?<span class="tip-content">Caracterização do jogador previsto, incluindo faixa etária, nível de conhecimento prévio sobre o tema e contexto em que o jogo será utilizado.</span></span></div><div class="info-card-subtitle">Faixa etária, nível e contexto de uso</div></div>
+        </div>
+        <div class="info-card-body is-placeholder" id="s1-publico">
+          <p>Caracterização do jogador previsto, incluindo faixa etária, nível de conhecimento prévio e contexto de uso.</p>
+        </div>
+      </div>
+
+      <!-- Objetivos do jogo -->
+      <div class="info-card" style="margin-top:20px">
+        <div class="info-card-header">
+          <div class="info-card-icon icon-amber">🎯</div>
+          <div><div class="info-card-title" id="sub-s1-objetivos">Objetivos do jogo<span class="tip-trigger" tabindex="0" aria-label="Sobre esta seção">?<span class="tip-content">Definição dos dois eixos do jogo – o objetivo de entretenimento (o que o jogador faz e por quê) e o objetivo de aprendizagem (o que o jogador deve ser capaz de fazer ao final).</span></span></div><div class="info-card-subtitle">Entretenimento e aprendizagem</div></div>
+        </div>
+        <div class="info-card-body is-placeholder" id="s1-objetivos">
+          <p>Declaração dos objetivos do jogo — entretenimento e aprendizagem — articulados de forma que um sustente o outro.</p>
+        </div>
+      </div>
+
+      <!-- Plataforma e formato -->
+      <div class="info-card">
+        <div class="info-card-header">
+          <div class="info-card-icon icon-steel">💻</div>
+          <div><div class="info-card-title" id="sub-s1-plataforma">Plataforma e formato<span class="tip-trigger" tabindex="0" aria-label="Sobre esta seção">?<span class="tip-content">Especificação técnica de onde o jogo será publicado e em que formato será jogado, incluindo duração estimada por sessão e estrutura de módulos.</span></span></div><div class="info-card-subtitle">Ambiente de execução e tipo de jogo</div></div>
+        </div>
+        <div class="info-card-body is-placeholder" id="s1-plataforma">
+          <p>Especificação técnica de onde o jogo será publicado e em que formato será jogado.</p>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- SEÇÃO 2 -->
+    <div class="section" id="section-s2">
+      <div class="page-cap">Seção 2<span class="tip-trigger" tabindex="0" aria-label="Sobre esta seção">?<span class="tip-content">Detalha o universo ficcional do jogo, sua dramaturgia e seus personagens. Cobre desde a premissa fundadora e o cenário em que a ação se passa até a estrutura de cenas, as ramificações narrativas baseadas em escolhas do jogador e o worldbuilding que sustenta a coerência interna do jogo.</span></span></div>
+      <div class="page-title">Narrativa</div>
+      <div class="content-block">
+        <div class="block-subtitle-card" id="sub-s2a"><div class="block-icon icon-sage">🌍</div><div class="block-text-group"><div class="block-title">Premissa e cenário<span class="tip-trigger" tabindex="0" aria-label="Sobre esta seção">?<span class="tip-content">Descrição do mundo em que o jogo se passa – sua época, atmosfera, contexto sociocultural e os elementos que situam o jogador na realidade ficcional do jogo.</span></span></div><div class="block-subtitle-desc">Mundo, época e atmosfera do jogo</div></div></div>
+        <div class="block-text is-placeholder">
+          <p>Descrição do mundo em que o jogo se passa, sua época, atmosfera e contexto sociocultural. O sistema deve gerar este conteúdo a partir do tom narrativo e do worldbuilding definidos.</p>
+        </div>
+      </div>
+      <div class="content-block">
+        <div class="block-subtitle-card" id="sub-s2b"><div class="block-icon icon-amber">📖</div><div class="block-text-group"><div class="block-title">Plot geral<span class="tip-trigger" tabindex="0" aria-label="Sobre esta seção">?<span class="tip-content">Estrutura dramática da história, organizada em atos, com a função narrativa de cada um e a progressão dos conflitos centrais.</span></span></div><div class="block-subtitle-desc">Estrutura dramática em três atos</div></div></div>
+        <div class="block-text is-placeholder">
+          <p>Estrutura dramática da história, organizada em atos, com a função narrativa de cada um e a progressão dos conflitos centrais. O sistema deve gerar este conteúdo a partir da premissa narrativa e da estrutura de níveis.</p>
+        </div>
+      </div>
+      <div class="content-block">
+        <div class="block-subtitle-card" id="sub-s2c"><div class="block-icon icon-teal">👥</div><div class="block-text-group"><div class="block-title">Personagens principais<span class="tip-trigger" tabindex="0" aria-label="Sobre esta seção">?<span class="tip-content">Perfil, motivações e arco de desenvolvimento dos personagens com os quais o jogador interage ao longo do jogo, incluindo mentores e personagens de apoio.</span></span></div><div class="block-subtitle-desc">Perfis e arcos dos personagens do jogo</div></div></div>
+        <div class="block-text is-placeholder">
+          <p>Descrição dos personagens principais do jogo — protagonista, mentores, antagonistas e personagens de apoio — com seus arcos e funções narrativas.</p>
+        </div>
+      </div>
+      <div class="content-block">
+        <div class="block-subtitle-card" id="sub-s2d"><div class="block-icon icon-steel">🎬</div><div class="block-text-group"><div class="block-title">Estrutura de cenas e eventos narrativos<span class="tip-trigger" tabindex="0" aria-label="Sobre esta seção">?<span class="tip-content">Sequência cena a cena de tudo que acontece no jogo, com descrição dos eventos, interações e revelações em cada uma.</span></span></div><div class="block-subtitle-desc">Sequência cena a cena dos eventos narrativos</div></div></div>
+        <div class="block-text is-placeholder">
+          <p>Sequência cena a cena dos eventos narrativos do jogo, organizada por ato, com a descrição de cada cena.</p>
+        </div>
+      </div>
+      <div class="content-block">
+        <div class="block-subtitle-card" id="sub-s2e"><div class="block-icon icon-amber">🔀</div><div class="block-text-group"><div class="block-title">Caminhos ramificados e escolhas do jogador com impacto na narrativa<span class="tip-trigger" tabindex="0" aria-label="Sobre esta seção">?<span class="tip-content">Mapeamento das decisões que o jogador toma ao longo do jogo, com seus respectivos impactos pedagógicos e narrativos.</span></span></div><div class="block-subtitle-desc">Decisões do jogador e suas consequências</div></div></div>
+        <div class="block-text is-placeholder">
+          <p>Descrições das escolhas com impacto narrativo ou pedagógico que o jogador encontrará ao longo do jogo, com as opções disponíveis e suas consequências.</p>
+        </div>
+      </div>
+      <div class="content-block">
+        <div class="block-subtitle-card" id="sub-s2f"><div class="block-icon icon-sage">🗺️</div><div class="block-text-group"><div class="block-title">Lore e worldbuilding<span class="tip-trigger" tabindex="0" aria-label="Sobre esta seção">?<span class="tip-content">Camadas de mundo que sustentam a coerência do jogo – referências culturais, regras do universo encantado, contexto regulatório como parte da ficção e demais elementos que ampliam o sentido do que o jogador vivencia.</span></span></div><div class="block-subtitle-desc">Camadas que sustentam a coerência do universo</div></div></div>
+        <div class="block-text is-placeholder">
+          <p>Camadas que sustentam a coerência do universo do jogo — mitologia, regras do mundo, cosmologia, sistemas culturais.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- SEÇÃO 3 -->
+    <div class="section" id="section-s3">
+      <div class="page-cap">Seção 3<span class="tip-trigger" tabindex="0" aria-label="Sobre esta seção">?<span class="tip-content">Define o que o jogador deve aprender ao longo do jogo. Distingue o conhecimento prévio que se pressupõe do conhecimento a ser construído pela experiência, identifica o que está fora do escopo, descreve os resultados de aprendizagem por nível e declara os princípios instrucionais que orientam o design pedagógico.</span></span></div>
+      <div class="page-title">Objetivos Pedagógicos</div>
+      <div class="content-block">
+        <div class="block-subtitle-card" id="sub-s3a"><div class="block-icon icon-steel">📚</div><div class="block-text-group"><div class="block-title">Conhecimento prévio requerido<span class="tip-trigger" tabindex="0" aria-label="Sobre esta seção">?<span class="tip-content">O que o jogador já precisa saber ao chegar ao jogo para que a experiência funcione.</span></span></div><div class="block-subtitle-desc">O que o jogador já precisa saber</div></div></div>
+        <div class="block-text is-placeholder">
+          <p>Descrição do conhecimento que o jogador precisa trazer ao chegar no jogo para que a experiência funcione.</p>
+        </div>
+      </div>
+      <div class="content-block">
+        <div class="block-subtitle-card" id="sub-s3b"><div class="block-icon icon-teal">🎓</div><div class="block-text-group"><div class="block-title">Conhecimento a ser adquirido durante o jogo<span class="tip-trigger" tabindex="0" aria-label="Sobre esta seção">?<span class="tip-content">O conjunto de conceitos, métodos e habilidades que o jogo se propõe a ensinar.</span></span></div><div class="block-subtitle-desc">Conceitos e habilidades ensinados pelo jogo</div></div></div>
+        <div class="block-text is-placeholder">
+          <p>Descrição do conjunto de conceitos, métodos e habilidades que o jogo se propõe a ensinar.</p>
+        </div>
+      </div>
+      <div class="content-block">
+        <div class="block-subtitle-card" id="sub-s3c"><div class="block-icon icon-sage">🔍</div><div class="block-text-group"><div class="block-title">Conhecimento potencial além do escopo direto<span class="tip-trigger" tabindex="0" aria-label="Sobre esta seção">?<span class="tip-content">Temas relacionados ao conteúdo do jogo que o jogo deliberadamente não aborda, com indicação dos contextos em que poderiam ser aprofundados.</span></span></div><div class="block-subtitle-desc">Temas correlatos fora do escopo do jogo</div></div></div>
+        <div class="block-text is-placeholder">
+          <p>Descrição dos temas relacionados ao conteúdo do jogo que estão deliberadamente fora do escopo, com indicação dos contextos em que poderiam ser aprofundados.</p>
+        </div>
+      </div>
+      <div class="content-block">
+        <div class="block-subtitle-card" id="sub-s3d"><div class="block-icon icon-green">🎯</div><div class="block-text-group"><div class="block-title">Resultados de aprendizagem por nível<span class="tip-trigger" tabindex="0" aria-label="Sobre esta seção">?<span class="tip-content">O que o jogador será capaz de fazer ao concluir cada nível, expresso em capacidades observáveis.</span></span></div><div class="block-subtitle-desc">Capacidades observáveis ao final de cada nível</div></div></div>
+        <div class="block-text is-placeholder">
+          <p>Descrição das capacidades observáveis que o jogador será capaz de demonstrar ao final de cada nível.</p>
+        </div>
+      </div>
+      <div class="content-block">
+        <div class="block-subtitle-card" id="sub-s3e"><div class="block-icon icon-amber">🧭</div><div class="block-text-group"><div class="block-title">Princípios instrucionais adotados<span class="tip-trigger" tabindex="0" aria-label="Sobre esta seção">?<span class="tip-content">As opções pedagógicas que orientam o design do jogo – como aprendizagem situada, aprendizagem ativa e verificação por desempenho.</span></span></div><div class="block-subtitle-desc">Opções pedagógicas que orientam o design</div></div></div>
+        <div class="block-text is-placeholder">
+          <p>Descrição das opções pedagógicas que orientam o design do jogo.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- SEÇÃO 4 -->
+    <div class="section" id="section-s4">
+      <div class="page-cap">Seção 4<span class="tip-trigger" tabindex="0" aria-label="Sobre esta seção">?<span class="tip-content">Detalha como o jogo funciona em termos de regras, controles e progressão. Cobre as regras fundamentais que estruturam a experiência, as ações disponíveis ao jogador, o sistema de pontuação e desbloqueio entre níveis e o equilíbrio entre desafio e habilidade ao longo do percurso.</span></span></div>
+      <div class="page-title">Mecânicas de Jogo</div>
+      <div class="content-block">
+        <div class="block-subtitle-card" id="sub-s4a"><div class="block-icon icon-steel">⚙️</div><div class="block-text-group"><div class="block-title">Regras fundamentais<span class="tip-trigger" tabindex="0" aria-label="Sobre esta seção">?<span class="tip-content">As regras que estruturam a experiência do jogador em cada nível e ao longo de todo o jogo.</span></span></div><div class="block-subtitle-desc">Regras que estruturam a experiência do jogador</div></div></div>
+        <div class="block-text is-placeholder">
+          <p>Descrição das regras que estruturam a experiência do jogador em cada nível e ao longo de todo o jogo.</p>
+        </div>
+      </div>
+      <div class="content-block">
+        <div class="block-subtitle-card" id="sub-s4b"><div class="block-icon icon-teal">🎮</div><div class="block-text-group"><div class="block-title">Controladores e ações disponíveis ao jogador<span class="tip-trigger" tabindex="0" aria-label="Sobre esta seção">?<span class="tip-content">Os recursos de interação do jogador com o jogo – controles de movimento, gestos de mouse e ações específicas em cada nível.</span></span></div><div class="block-subtitle-desc">Recursos de interação com o jogo</div></div></div>
+        <div class="block-text is-placeholder">
+          <p>Descrição dos recursos de interação do jogador com o jogo — controles, gestos e ações específicas em cada nível.</p>
+        </div>
+      </div>
+      <div class="content-block">
+        <div class="block-subtitle-card" id="sub-s4c"><div class="block-icon icon-green">📈</div><div class="block-text-group"><div class="block-title">Sistema de progressão<span class="tip-trigger" tabindex="0" aria-label="Sobre esta seção">?<span class="tip-content">Como o jogador avança ao longo do jogo, incluindo a tabela de pontuação por interação, os totais por nível e o desbloqueio entre níveis.</span></span></div><div class="block-subtitle-desc">Como o jogador avança ao longo do jogo</div></div></div>
+        <div class="block-text is-placeholder">
+          <p>Descrição de como o jogador avança ao longo do jogo, incluindo o sistema de pontuação por interação, os totais por nível e o desbloqueio entre níveis.</p>
+        </div>
+      </div>
+      <div class="content-block">
+        <div class="block-subtitle-card" id="sub-s4d"><div class="block-icon icon-amber">⚖️</div><div class="block-text-group"><div class="block-title">Balanceamento entre habilidade e desafio (curva de Flow)<span class="tip-trigger" tabindex="0" aria-label="Sobre esta seção">?<span class="tip-content">Como o jogo equilibra a demanda cognitiva e a habilidade do jogador ao longo dos níveis para evitar frustração e tédio.</span></span></div><div class="block-subtitle-desc">Equilíbrio entre demanda cognitiva e habilidade</div></div></div>
+        <div class="block-text is-placeholder">
+          <p>Análise do equilíbrio entre demanda cognitiva e habilidade do jogador ao longo dos níveis, para evitar frustração e tédio.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- SEÇÃO 5 -->
+    <div class="section" id="section-s5">
+      <div class="page-cap">Seção 5<span class="tip-trigger" tabindex="0" aria-label="Sobre esta seção">?<span class="tip-content">Lista os desafios concretos do jogo, suas metas mensuráveis e a relação entre cada desafio, a progressão narrativa e os resultados de aprendizagem. Conecta o que o jogador faz com o que o jogador aprende e com o que a história avança.</span></span></div>
+      <div class="page-title">Desafios e Objetivos</div>
+      <div class="content-block">
+        <div class="block-subtitle-card" id="sub-s5a"><div class="block-icon icon-amber">🏆</div><div class="block-text-group"><div class="block-title">Lista de desafios com parâmetros mensuráveis<span class="tip-trigger" tabindex="0" aria-label="Sobre esta seção">?<span class="tip-content">Descrição de cada desafio do jogo, com critério de sucesso, sistema de pontuação e resultado de aprendizagem vinculado.</span></span></div><div class="block-subtitle-desc">Desafios concretos com critérios mensuráveis</div></div></div>
+        <div class="block-text is-placeholder">
+          <p>Descrição dos desafios concretos do jogo, com critério de sucesso, sistema de pontuação e resultado de aprendizagem vinculado a cada um.</p>
+        </div>
+      </div>
+      <div class="content-block">
+        <div class="block-subtitle-card" id="sub-s5b"><div class="block-icon icon-green">🎯</div><div class="block-text-group"><div class="block-title">Metas que o jogador deve cumprir<span class="tip-trigger" tabindex="0" aria-label="Sobre esta seção">?<span class="tip-content">As metas obrigatórias e opcionais de cada nível, organizadas em forma de objetivos diretos.</span></span></div><div class="block-subtitle-desc">Metas obrigatórias e opcionais por nível</div></div></div>
+        <div class="block-text is-placeholder">
+          <p>Descrição das metas obrigatórias e opcionais de cada nível, organizadas em forma de objetivos diretos.</p>
+        </div>
+      </div>
+      <div class="content-block">
+        <div class="block-subtitle-card" id="sub-s5c"><div class="block-icon icon-teal">🔗</div><div class="block-text-group"><div class="block-title">Relação entre desafios, metas e progressão narrativa<span class="tip-trigger" tabindex="0" aria-label="Sobre esta seção">?<span class="tip-content">Análise de como cada desafio cumprido faz avançar simultaneamente a narrativa e a aprendizagem do jogador.</span></span></div><div class="block-subtitle-desc">Como desafios fazem avançar a narrativa</div></div></div>
+        <div class="block-text is-placeholder">
+          <p>Análise de como cada desafio cumprido faz avançar simultaneamente a narrativa e a aprendizagem do jogador.</p>
+        </div>
+      </div>
+      <div class="content-block">
+        <div class="block-subtitle-card" id="sub-s5d"><div class="block-icon icon-sage">📊</div><div class="block-text-group"><div class="block-title">Vinculação entre desafio e resultado de aprendizagem<span class="tip-trigger" tabindex="0" aria-label="Sobre esta seção">?<span class="tip-content">Mapa que cruza cada desafio do jogo com o resultado pedagógico que ele se propõe a entregar.</span></span></div><div class="block-subtitle-desc">Mapa de desafio × resultado de aprendizagem</div></div></div>
+        <div class="block-text is-placeholder">
+          <p>Mapa que cruza cada desafio do jogo com o resultado pedagógico que ele se propõe a entregar.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- SEÇÃO 6 -->
+    <div class="section" id="section-s6">
+      <div class="page-cap">Seção 6<span class="tip-trigger" tabindex="0" aria-label="Sobre esta seção">?<span class="tip-content">Estrutura o jogo em níveis sequenciais, descrevendo a função pedagógica de cada um, o conhecimento que cada nível pressupõe, entrega e testa, a ordem pedagógica que justifica a sequência e as metas e desafios associados a cada nível.</span></span></div>
+      <div class="page-title">Níveis</div>
+      <div class="content-block">
+        <div class="block-subtitle-card" id="sub-s6a"><div class="block-icon icon-amber">🪜</div><div class="block-text-group"><div class="block-title">Estrutura e sequência de níveis<span class="tip-trigger" tabindex="0" aria-label="Sobre esta seção">?<span class="tip-content">Descrição dos níveis do jogo em ordem, com função pedagógica, duração estimada e recompensa de cada um.</span></span></div><div class="block-subtitle-desc">Três níveis sequenciais e suas funções</div></div></div>
+        <div class="block-text is-placeholder">
+          <p>Descrição dos níveis do jogo em ordem, com função pedagógica, duração estimada e recompensa de cada um.</p>
+        </div>
+      </div>
+      <div class="content-block">
+        <div class="block-subtitle-card" id="sub-s6b"><div class="block-icon icon-teal">📋</div><div class="block-text-group"><div class="block-title">Conhecimento requerido, entregue e testado por nível<span class="tip-trigger" tabindex="0" aria-label="Sobre esta seção">?<span class="tip-content">Detalhamento, por nível, do que o jogador precisa saber para começar, do que ele aprende durante o nível e do que é verificado.</span></span></div><div class="block-subtitle-desc">Conhecimento pressuposto, entregue e testado</div></div></div>
+        <div class="block-text is-placeholder">
+          <p>Detalhamento, por nível, do que o jogador precisa saber para começar, do que ele aprende durante o nível e do que é verificado.</p>
+        </div>
+      </div>
+      <div class="content-block">
+        <div class="block-subtitle-card" id="sub-s6c"><div class="block-icon icon-sage">🧭</div><div class="block-text-group"><div class="block-title">Ordem pedagógica dos níveis<span class="tip-trigger" tabindex="0" aria-label="Sobre esta seção">?<span class="tip-content">Justificativa da sequência dos níveis a partir da progressão pedagógica que ela representa.</span></span></div><div class="block-subtitle-desc">Justificativa da sequência dos níveis</div></div></div>
+        <div class="block-text is-placeholder">
+          <p>Justificativa da sequência dos níveis a partir da progressão pedagógica que ela representa.</p>
+        </div>
+      </div>
+      <div class="content-block">
+        <div class="block-subtitle-card" id="sub-s6d"><div class="block-icon icon-green">🎯</div><div class="block-text-group"><div class="block-title">Metas e desafios associados a cada nível<span class="tip-trigger" tabindex="0" aria-label="Sobre esta seção">?<span class="tip-content">Lista das metas obrigatórias e dos desafios específicos de cada nível.</span></span></div><div class="block-subtitle-desc">Metas e desafios específicos de cada nível</div></div></div>
+        <div class="block-text is-placeholder">
+          <p>Lista das metas obrigatórias e dos desafios específicos de cada nível.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- SEÇÃO 7 -->
+    <div class="section" id="section-s7">
+      <div class="page-cap">Seção 7<span class="tip-trigger" tabindex="0" aria-label="Sobre esta seção">?<span class="tip-content">Trata das estratégias que o jogo emprega para sustentar a atenção, a motivação e a satisfação do jogador. Cobre os elementos de fantasia, curiosidade, estímulos sensoriais, sistema de recompensas, feedback e a articulação entre motivação intrínseca e extrínseca.</span></span></div>
+      <div class="page-title">Elementos de Engajamento</div>
+      <div class="content-block">
+        <div class="block-subtitle-card" id="sub-s7a"><div class="block-icon icon-amber">✨</div><div class="block-text-group"><div class="block-title">Fantasy<span class="tip-trigger" tabindex="0" aria-label="Sobre esta seção">?<span class="tip-content">A fantasia central que o jogo oferece ao jogador – o papel ficcional que ele assume e a experiência simbólica que isso proporciona.</span></span></div><div class="block-subtitle-desc">Papel ficcional e experiência simbólica do jogador</div></div></div>
+        <div class="block-text is-placeholder">
+          <p>Descrição da fantasia central que o jogo oferece — o papel ficcional que o jogador assume e a experiência simbólica que isso proporciona.</p>
+        </div>
+      </div>
+      <div class="content-block">
+        <div class="block-subtitle-card" id="sub-s7b"><div class="block-icon icon-sage">🔮</div><div class="block-text-group"><div class="block-title">Mystery / Curiosidade<span class="tip-trigger" tabindex="0" aria-label="Sobre esta seção">?<span class="tip-content">Os enigmas e perguntas em aberto que mantêm o jogador interessado em avançar e descobrir.</span></span></div><div class="block-subtitle-desc">Enigmas que mantêm o jogador interessado</div></div></div>
+        <div class="block-text is-placeholder">
+          <p>Descrição dos enigmas e perguntas em aberto que mantêm o jogador interessado em avançar e descobrir.</p>
+        </div>
+      </div>
+      <div class="content-block">
+        <div class="block-subtitle-card" id="sub-s7c"><div class="block-icon icon-teal">🎨</div><div class="block-text-group"><div class="block-title">Estímulos sensoriais<span class="tip-trigger" tabindex="0" aria-label="Sobre esta seção">?<span class="tip-content">Os recursos visuais e sonoros que reforçam a experiência narrativa e pedagógica do jogo, descritos por nível.</span></span></div><div class="block-subtitle-desc">Recursos visuais e sonoros por nível</div></div></div>
+        <div class="block-text is-placeholder">
+          <p>Descrição dos recursos visuais e sonoros que reforçam a experiência narrativa e pedagógica do jogo, descritos por nível.</p>
+        </div>
+      </div>
+      <div class="content-block">
+        <div class="block-subtitle-card" id="sub-s7d"><div class="block-icon icon-amber">🏅</div><div class="block-text-group"><div class="block-title">Sistema de recompensas e punições<span class="tip-trigger" tabindex="0" aria-label="Sobre esta seção">?<span class="tip-content">Como o jogo entrega reconhecimento ao jogador – em pontuação, credenciais e respostas narrativas – e como trata os erros, sem bloquear progressão.</span></span></div><div class="block-subtitle-desc">Pontuação, credenciais e respostas narrativas</div></div></div>
+        <div class="block-text is-placeholder">
+          <p>Descrição de como o jogo entrega reconhecimento ao jogador — em pontuação, credenciais e respostas narrativas — e como trata os erros.</p>
+        </div>
+      </div>
+      <div class="content-block">
+        <div class="block-subtitle-card" id="sub-s7e"><div class="block-icon icon-steel">💬</div><div class="block-text-group"><div class="block-title">Feedback ao jogador<span class="tip-trigger" tabindex="0" aria-label="Sobre esta seção">?<span class="tip-content">Os três registros de feedback do jogo – ambiental, mecânico e narrativo – e como cada um opera nos diferentes níveis.</span></span></div><div class="block-subtitle-desc">Registros ambiental, mecânico e narrativo</div></div></div>
+        <div class="block-text is-placeholder">
+          <p>Descrição dos três registros de feedback do jogo — ambiental, mecânico e narrativo — e como cada um opera nos diferentes níveis.</p>
+        </div>
+      </div>
+      <div class="content-block">
+        <div class="block-subtitle-card" id="sub-s7f"><div class="block-icon icon-green">💫</div><div class="block-text-group"><div class="block-title">Motivação intrínseca e extrínseca<span class="tip-trigger" tabindex="0" aria-label="Sobre esta seção">?<span class="tip-content">As duas dimensões de motivação que o jogo aposta em ativar – o valor curricular real fora do jogo e o engajamento interno do jogador com a narrativa e as mecânicas.</span></span></div><div class="block-subtitle-desc">Valor curricular real e engajamento interno</div></div></div>
+        <div class="block-text is-placeholder">
+          <p>Descrição das duas dimensões de motivação que o jogo aposta em ativar — valor curricular real e engajamento interno com a narrativa e as mecânicas.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- SEÇÃO 8 -->
+    <div class="section" id="section-s8">
+      <div class="page-cap">Seção 8<span class="tip-trigger" tabindex="0" aria-label="Sobre esta seção">?<span class="tip-content">Define o tratamento estético e textual do jogo. Cobre as diretrizes visuais e sonoras que orientam a produção, todos os textos e diálogos que o jogador encontra cena a cena, e as cutscenes que articulam os momentos narrativos de transição.</span></span></div>
+      <div class="page-title">Conteúdo Audiovisual</div>
+      <div class="content-block">
+        <div class="block-subtitle-card" id="sub-s8a"><div class="block-icon icon-sage">🎨</div><div class="block-text-group"><div class="block-title">Diretrizes visuais<span class="tip-trigger" tabindex="0" aria-label="Sobre esta seção">?<span class="tip-content">Princípios de identidade visual, paleta, tratamento de personagens, ambientes e interface.</span></span></div><div class="block-subtitle-desc">Identidade visual, paleta e tratamento de cenas</div></div></div>
+        <div class="block-text is-placeholder">
+          <p>Princípios de identidade visual do jogo — paleta, tratamento de personagens, ambientes e interface.</p>
+        </div>
+      </div>
+      <div class="content-block">
+        <div class="block-subtitle-card" id="sub-s8b"><div class="block-icon icon-amber">🎵</div><div class="block-text-group"><div class="block-title">Diretrizes de áudio<span class="tip-trigger" tabindex="0" aria-label="Sobre esta seção">?<span class="tip-content">Princípios de trilha sonora, efeitos sonoros e narração, com variação por nível.</span></span></div><div class="block-subtitle-desc">Trilha, efeitos sonoros e narração por nível</div></div></div>
+        <div class="block-text is-placeholder">
+          <p>Princípios de trilha sonora, efeitos sonoros e narração, com variação por nível.</p>
+        </div>
+      </div>
+      <div class="content-block">
+        <div class="block-subtitle-card" id="sub-s8c"><div class="block-icon icon-teal">💭</div><div class="block-text-group"><div class="block-title">Textos in-game e diálogos detalhados por cena<span class="tip-trigger" tabindex="0" aria-label="Sobre esta seção">?<span class="tip-content">Todas as falas dos personagens, instruções de interface e textos do jogo, organizados cena a cena.</span></span></div><div class="block-subtitle-desc">Falas, instruções e textos do jogo cena a cena</div></div></div>
+        <div class="block-text is-placeholder">
+          <p>Todas as falas dos personagens, instruções de interface e textos do jogo, organizados cena a cena.</p>
+        </div>
+      </div>
+      <div class="content-block">
+        <div class="block-subtitle-card" id="sub-s8d"><div class="block-icon icon-steel">🎬</div><div class="block-text-group"><div class="block-title">Cutscenes e cinemáticas<span class="tip-trigger" tabindex="0" aria-label="Sobre esta seção">?<span class="tip-content">As cenas não jogáveis do jogo – abertura, transições entre níveis e encerramento – com descrição visual, evento narrativo e duração estimada.</span></span></div><div class="block-subtitle-desc">Cenas não jogáveis de abertura, transição e final</div></div></div>
+        <div class="block-text is-placeholder">
+          <p>Descrição das cenas não jogáveis do jogo — abertura, transições entre níveis e encerramento — com descrição visual, evento narrativo e duração estimada.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- SEÇÃO 9 -->
+    <div class="section" id="section-s9">
+      <div class="page-cap">Seção 9<span class="tip-trigger" tabindex="0" aria-label="Sobre esta seção">?<span class="tip-content">Declara as restrições técnicas obrigatórias do jogo – plataforma de publicação, requisitos do dispositivo do jogador e arquitetura de dados que sustentam a integração com a plataforma The Blue City.</span></span></div>
+      <div class="page-title">Requisitos Técnicos</div>
+      <div class="content-block">
+        <div class="block-subtitle-card" id="sub-s9a"><div class="block-icon icon-teal">🌐</div><div class="block-text-group"><div class="block-title">Plataforma de publicação<span class="tip-trigger" tabindex="0" aria-label="Sobre esta seção">?<span class="tip-content">Especificação técnica de onde o jogo será publicado, incluindo plataforma de execução, integração e resolução alvo.</span></span></div><div class="block-subtitle-desc">Onde o jogo será publicado e em que formato</div></div></div>
+        <div class="block-text is-placeholder">
+          <p>Especificação técnica de onde o jogo será publicado, incluindo plataforma de execução, integração e resolução alvo.</p>
+        </div>
+      </div>
+      <div class="content-block">
+        <div class="block-subtitle-card" id="sub-s9b"><div class="block-icon icon-amber">🔒</div><div class="block-text-group"><div class="block-title">Restrições técnicas obrigatórias<span class="tip-trigger" tabindex="0" aria-label="Sobre esta seção">?<span class="tip-content">Restrições técnicas impostas pela plataforma The Blue City e pelo contexto de uso do jogo, que devem ser respeitadas pelo desenvolvimento.</span></span></div><div class="block-subtitle-desc">Restrições impostas pela plataforma e contexto</div></div></div>
+        <div class="block-text is-placeholder">
+          <p>Restrições técnicas impostas pela plataforma e pelo contexto de uso, que devem ser respeitadas pelo desenvolvimento.</p>
+        </div>
+      </div>
+      <div class="content-block">
+        <div class="block-subtitle-card" id="sub-s9c"><div class="block-icon icon-steel">💻</div><div class="block-text-group"><div class="block-title">Requisitos do dispositivo do jogador<span class="tip-trigger" tabindex="0" aria-label="Sobre esta seção">?<span class="tip-content">Requisitos mínimos do dispositivo onde o jogo será executado pelo jogador final – navegador, resolução, periféricos e conexão.</span></span></div><div class="block-subtitle-desc">Especificações mínimas do computador do jogador</div></div></div>
+        <div class="block-text is-placeholder">
+          <p>Requisitos mínimos do dispositivo onde o jogo será executado pelo jogador final — navegador, resolução, periféricos e conexão.</p>
+        </div>
+      </div>
+      <div class="content-block">
+        <div class="block-subtitle-card" id="sub-s9d"><div class="block-icon icon-sage">🗄️</div><div class="block-text-group"><div class="block-title">Arquitetura de dados<span class="tip-trigger" tabindex="0" aria-label="Sobre esta seção">?<span class="tip-content">Como o estado do jogo é armazenado entre sessões, como as escolhas do jogador são registradas e como a comunicação com a plataforma ocorre.</span></span></div><div class="block-subtitle-desc">Estado do jogador entre sessões e comunicação</div></div></div>
+        <div class="block-text is-placeholder">
+          <p>Descrição de como o estado do jogo é armazenado entre sessões, como as escolhas do jogador são registradas e como a comunicação com a plataforma ocorre.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- SEÇÃO 10 -->
+    <div class="section" id="section-s10">
+      <div class="page-cap">Seção 10<span class="tip-trigger" tabindex="0" aria-label="Sobre esta seção">?<span class="tip-content">Declara os cinco critérios contra os quais o Game Design Document é verificado ao final do processo de elaboração – completude, consistência interna, aderência pedagógica, adequação ao público e rastreabilidade das decisões.</span></span></div>
+      <div class="page-title">Critérios de Qualidade e Validação</div>
+      <div class="block-text" style="margin-bottom:20px">
+        <p>Esta seção declara os <strong>cinco critérios</strong> contra os quais o Game Design Document é verificado ao final do processo de elaboração. Os critérios são aplicados <em>simultaneamente</em> a todas as seções e subitens do documento. A verificação executada na Etapa 8 percorre todos os elementos do GDD e confirma o atendimento a cada critério antes do encerramento do processo.</p>
+      </div>
+      <div class="content-block">
+        <div class="block-subtitle-card" id="sub-s10a"><div class="block-icon icon-green">✅</div><div class="block-text-group"><div class="block-title">Completude do documento<span class="tip-trigger" tabindex="0" aria-label="Sobre esta seção">?<span class="tip-content">Verificação de que todos os subitens declarados na metodologia estão preenchidos com conteúdo substantivo, sem placeholders ou pendências.</span></span></div><div class="block-subtitle-desc">Todos os subitens preenchidos com conteúdo substantivo</div></div></div>
+        <div class="block-text is-placeholder">
+          <p>Verificação de que todos os subitens declarados na metodologia estão preenchidos com conteúdo substantivo, sem placeholders ou pendências.</p>
+        </div>
+      </div>
+      <div class="content-block">
+        <div class="block-subtitle-card" id="sub-s10b"><div class="block-icon icon-teal">🔄</div><div class="block-text-group"><div class="block-title">Consistência interna<span class="tip-trigger" tabindex="0" aria-label="Sobre esta seção">?<span class="tip-content">Verificação de coerência entre todas as seções do documento – terminologia uniforme, decisões compatíveis, regras consistentes com a narrativa e cálculos que fecham.</span></span></div><div class="block-subtitle-desc">Coerência terminológica e de decisões entre seções</div></div></div>
+        <div class="block-text is-placeholder">
+          <p>Verificação de coerência entre todas as seções do documento — terminologia uniforme, decisões compatíveis, regras consistentes com a narrativa e cálculos que fecham.</p>
+        </div>
+      </div>
+      <div class="content-block">
+        <div class="block-subtitle-card" id="sub-s10c"><div class="block-icon icon-sage">🎓</div><div class="block-text-group"><div class="block-title">Aderência aos resultados de aprendizagem<span class="tip-trigger" tabindex="0" aria-label="Sobre esta seção">?<span class="tip-content">Verificação de que todos os resultados de aprendizagem declarados em <strong>Resultados de aprendizagem por nível</strong> estão cobertos pela estrutura do jogo, com rastreabilidade até pelo menos um nível em <strong>Conhecimento por nível</strong> e um desafio em <strong>Vinculação pedagógica</strong>.</span></span></div><div class="block-subtitle-desc">Resultados de aprendizagem cobertos por nível e desafio</div></div></div>
+        <div class="block-text is-placeholder">
+          <p>Verificação de que todos os resultados de aprendizagem declarados estão cobertos pela estrutura do jogo, com rastreabilidade até pelo menos um nível e um desafio.</p>
+        </div>
+      </div>
+      <div class="content-block">
+        <div class="block-subtitle-card" id="sub-s10d"><div class="block-icon icon-amber">👥</div><div class="block-text-group"><div class="block-title">Adequação ao público-alvo<span class="tip-trigger" tabindex="0" aria-label="Sobre esta seção">?<span class="tip-content">Verificação de que linguagem, complexidade conceitual e referências culturais são compatíveis com o público-alvo declarado na Seção 1.</span></span></div><div class="block-subtitle-desc">Linguagem compatível com o público declarado</div></div></div>
+        <div class="block-text is-placeholder">
+          <p>Verificação de que linguagem, complexidade conceitual e referências culturais são compatíveis com o público-alvo declarado.</p>
+        </div>
+      </div>
+      <div class="content-block">
+        <div class="block-subtitle-card" id="sub-s10e"><div class="block-icon icon-steel">🔖</div><div class="block-text-group"><div class="block-title">Rastreabilidade das decisões de design<span class="tip-trigger" tabindex="0" aria-label="Sobre esta seção">?<span class="tip-content">Verificação de que cada decisão de design tem registro completo de validação humana – texto original, texto alterado e justificativa – garantindo a auditoria do processo.</span></span></div><div class="block-subtitle-desc">Registro completo de validação humana das decisões</div></div></div>
+        <div class="block-text is-placeholder">
+          <p>Verificação de que cada decisão de design tem registro completo de validação humana — texto original, texto alterado e justificativa — garantindo a auditoria do processo.</p>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /main -->
+</div><!-- /content -->
+
+<script>
+  const sectionLabels = {
+    premissas: 'Premissas',
+    s1: 'Seção 1 – Visão Geral',
+    s2: 'Seção 2 – Narrativa',
+    s3: 'Seção 3 – Objetivos Pedagógicos',
+    s4: 'Seção 4 – Mecânicas de Jogo',
+    s5: 'Seção 5 – Desafios e Objetivos',
+    s6: 'Seção 6 – Níveis',
+    s7: 'Seção 7 – Elementos de Engajamento',
+    s8: 'Seção 8 – Conteúdo Audiovisual',
+    s9: 'Seção 9 – Requisitos Técnicos',
+    s10: 'Seção 10 – Critérios de Qualidade e Validação',
+  };
+
+  function showSection(id) {
+    document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+    document.querySelectorAll('.nav-section-title').forEach(n => n.classList.remove('active'));
+    document.getElementById('section-' + id).classList.add('active');
+    document.getElementById('nav-' + id).classList.add('active');
+    document.getElementById('breadcrumbSection').textContent = sectionLabels[id] || id;
+    window.scrollTo(0, 0);
+  }
+
+  function toggleSidebar(forceState) {
+    const sidebar = document.querySelector('.sidebar');
+    const overlay = document.querySelector('.sidebar-overlay');
+    const shouldOpen = forceState !== undefined ? forceState : !sidebar.classList.contains('is-open');
+    sidebar.classList.toggle('is-open', shouldOpen);
+    overlay.classList.toggle('is-open', shouldOpen);
+    // Bloquear scroll do body quando sidebar aberta em mobile
+    document.body.style.overflow = shouldOpen ? 'hidden' : '';
+  }
+
+  // Fechar sidebar ao clicar num nav-section-title ou nav-sub em mobile
+  document.addEventListener('click', (e) => {
+    if (window.innerWidth >= 1024) return;
+    if (e.target.closest('.nav-section-title') || e.target.closest('.nav-sub')) {
+      // Pequeno delay para a navegação acontecer antes de fechar
+      setTimeout(() => toggleSidebar(false), 100);
+    }
+  });
+
+  // Fechar sidebar com ESC
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') toggleSidebar(false);
+  });
+
+  function goToSubitem(sectionId, targetId) {
+    showSection(sectionId);
+
+    if (!targetId) {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      return;
+    }
+
+    // Espera o reflow após mudar de seção, depois rola até o alvo
+    setTimeout(() => {
+      const el = document.getElementById(targetId);
+      if (el) {
+        // Se o alvo estiver dentro de um info-card ou content-block, rolar
+        // até o card pai (não até o título, que está abaixo do header)
+        const scrollTarget = el.closest('.info-card, .content-block') || el;
+        const rect = scrollTarget.getBoundingClientRect();
+        // Compensar a topbar sticky (56px) + margem visual
+        const top = rect.top + window.scrollY - 80;
+        window.scrollTo({ top, behavior: 'smooth' });
+        // Flash teal momentâneo para destacar o destino (no card inteiro)
+        scrollTarget.style.transition = 'background 0.6s, box-shadow 0.6s';
+        const originalBg = scrollTarget.style.background;
+        const originalShadow = scrollTarget.style.boxShadow;
+        scrollTarget.style.boxShadow = '0 0 0 2px rgba(20,187,191,0.5)';
+        setTimeout(() => {
+          scrollTarget.style.background = originalBg;
+          scrollTarget.style.boxShadow = originalShadow;
+        }, 1400);
+      }
+      // Marcar nav-sub ativo
+      document.querySelectorAll('.nav-sub.active').forEach(n => n.classList.remove('active'));
+      const navSub = document.querySelector(`.nav-sub[data-target="${targetId}"]`);
+      if (navSub) navSub.classList.add('active');
+    }, 80);
+  }
+
+
+  // ── TOOLTIPS: toggle on tap (mobile), hover funciona via CSS ──
+  document.addEventListener('click', function (e) {
+    const trigger = e.target.closest('.tip-trigger');
+    // Se clicou dentro do conteúdo do tooltip, não fechar
+    if (e.target.closest('.tip-content')) return;
+    document.querySelectorAll('.tip-trigger.is-open').forEach(t => {
+      if (t !== trigger) t.classList.remove('is-open');
+    });
+    if (trigger) {
+      e.preventDefault();
+      e.stopPropagation();
+      trigger.classList.toggle('is-open');
+    }
+  });
+
+  // Fechar tooltip aberto com ESC
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape') {
+      document.querySelectorAll('.tip-trigger.is-open').forEach(t => t.classList.remove('is-open'));
+    }
+  });
+
+  // ── BOTÃO "GERAR PDF FINAL" ──
+  // Estratégia: window.print() respeita @media print (já configurado no CSS).
+  // O usuário escolhe "Salvar como PDF" no diálogo do navegador.
+  document.querySelector('.btn-pdf').addEventListener('click', function () {
+    // Mostrar todas as seções para impressão
+    const sections = document.querySelectorAll('.section');
+    const previouslyActive = document.querySelector('.section.active');
+    sections.forEach(s => s.classList.add('active'));
+    // Aguardar um tick para o browser pintar antes de imprimir
+    setTimeout(() => {
+      window.print();
+      // Restaurar visualização anterior
+      sections.forEach(s => s.classList.remove('active'));
+      if (previouslyActive) previouslyActive.classList.add('active');
+    }, 100);
+  });
+</script>
+</body>
+</html>
